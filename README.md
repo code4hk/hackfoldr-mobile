@@ -7,11 +7,13 @@ The actual content of the app is under hackfoldr/www
 
 To build and run the app:
 
-1. Add android SDK to your PATH variable
+0. Add android SDK to your PATH variable
 
 e.g. $ echo $PATH
 
 /opt/local/bin:/opt/local/sbin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/local/git/bin:/usr/local/mysql/bin:/Applications/Android Studio.app/sdk/tools:/Applications/Android Studio.app/sdk/platform-tools:/Applications/apache-ant-1.9.4/bin:/Applications/Android Studio.app/sdk
+
+1. cd /Users/user/Downloads/hackfoldr-mobile/hackfoldr
 
 2.    $ cordova platform add android
 
