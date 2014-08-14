@@ -1,3 +1,3 @@
 # view AndroidManifest.xml #generated:6
--keep class hk.code4.hackfoldrmobile.HackfoldrMobile { <init>(...); }
+-keep class com.ionicframework.myapp460341.HackfoldrMobile { <init>(...); }
 

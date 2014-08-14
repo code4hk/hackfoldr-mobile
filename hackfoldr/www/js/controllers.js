@@ -1,6 +1,7 @@
-angular.module('starter.controllers', [])
+angular.module('starter.controllers', ['starter.services'])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout,$http) {
+  console.log('cordovaHTTP');
   // Form data for the login modal
   $scope.loginData = {};
 
@@ -33,72 +34,33 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('PlaylistsCtrl', ['$scope','DbService',function($scope,DbService) {
+.controller('SNSCtrl', ['$scope','DbService','snsService',function($scope,DbService,snsService) {
+
+$scope.feeds =[];
+
+snsService["facebook"].search(["政總"])
+.then(function(data){
+  console.log(data.data);
+
+  $scope.feeds = data.data;
+  console.log($scope.feeds);
+  $scope.$digest();
+
+});
+
+
+  }])
+
+.controller('FileListsCtrl', ['$scope','DbService','snsService',function($scope,DbService,snsService) {
     // document.addEventListener("deviceready", testing, false);
 
 DbService.init();
-
     // PhoneGap is ready
     //
-  $scope.playlists = [
+  $scope.files = [
     { title: 'Reggae', id: 1 },
-    { title: 'Chill', id: 2 },
-    { title: 'Dubstep', id: 3 },
-    { title: 'Indie', id: 4 },
-    { title: 'Rap', id: 5 },
-    { title: 'Cowbell', id: 6 }
+    { title: 'Chill', id: 2 }
   ];
 }])
-.service('DbService',function() {
-  var _service = {};
-  var db = null;
-  console.log('Db init');
-
-  _service.init=function() {
-
-      db = window.openDatabase("Database", "1.0", "PhoneGap Demo", 200000);
-      db.transaction(populateDB, errorCB, successCB);
-
-  }
-  function populateDB(tx) {
-       tx.executeSql('DROP TABLE IF EXISTS DEMO');
-       tx.executeSql('CREATE TABLE IF NOT EXISTS DEMO (id unique, data)');
-       tx.executeSql('INSERT INTO DEMO (id, data) VALUES (1, "First row")');
-       tx.executeSql('INSERT INTO DEMO (id, data) VALUES (2, "Second row")');
-  }
-  function errorCB(err) {
-      console.log("Error processing SQL: "+err.code);
-  }
-
-
-  function queryDB(tx) {
-      tx.executeSql('SELECT * FROM DEMO', [], querySuccess, errorCB);
-  }
-
-  function querySuccess(tx, results) {
-      // this will be empty since no rows were inserted.
-      var len = results.rows.length;
-      console.log("DEMO table: " + len + " rows found.");
-      for (var i=0; i<len; i++){
-          console.log("Row = " + i + " ID = " + results.rows.item(i).id + " Data =  " + results.rows.item(i).data);
-      }
-  }
-
-
-  function successCB() {
-      console.log("success!");
-      console.log(db);
-      db.transaction(queryDB, errorCB);
-  }
-
-
-  function errorCB(err) {
-      alert("Error processing SQL: "+err.code);
-  }
-
-
-return _service;
-
-})
-.controller('PlaylistCtrl', function($scope, $stateParams) {
+.controller('FileCtrl', function($scope, $stateParams) {
 });

@@ -4,8 +4,24 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers'])
 
+console.log(window);
+// cordovaHttp.get("https://google.com/", {
+//     id: 12,
+//     message: "test"
+// }, { Authorization: "OAuth2: token" }, function(response) {
+//     console.log(response.status);
+// }, function(response) {
+//     console.error(response.error);
+// });
+
+angular.module('starter', ['ionic', 'starter.controllers'])
+.factory('q', function () {
+    return Q;
+})
+.factory('Lazy', function () {
+    return Lazy;
+})
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -52,7 +68,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       views: {
         'menuContent' :{
           templateUrl: "templates/playlists.html",
-          controller: 'PlaylistsCtrl'
+          controller: 'FileListsCtrl'
         }
       }
     })
@@ -62,7 +78,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       views: {
         'menuContent' :{
           templateUrl: "templates/playlist.html",
-          controller: 'PlaylistCtrl'
+          controller: 'FileCtrl'
         }
       }
     });
