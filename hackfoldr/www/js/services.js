@@ -2,10 +2,91 @@ angular.module('starter.services', [])
 .factory('snsConfig',['appConfig',function(appConfig) {
   return appConfig.sns;
 }])
+.service('foldrService',function($http){
+
+  //Now we just support hackfoldr with Gspreadsheet. Better get a meta API
+  //od6 for default sheet
+  var _service = {};
+
+  _service.current = {
+    id:'',
+    fileIndex:-1
+  };
+
+  _service.files = [];
+
+  function getSpreadsheetUrl(id){
+    return ['https://spreadsheets.google.com/feeds/list/',id,'/od6/public/values?alt=json'].join('');;
+
+  }
+
+
+  function _parseFeed(feed){
+    var files= [];
+    console.log('asdas');
+
+    var entries = Lazy(feed.entry);
+    entries.each(function(entry,i){
+        var url =   entry.title.$t;
+        console.log(entry);
+        var file = {};
+        var type = "normal";
+        var content =null;
+        var columnIndex = 0;
+        var columns = [];
+//quick & dirty code
+        Lazy(entry).each(function(v,k){
+          var isColumn = !!(k.match(/.*gsx\$/));
+          if(isColumn){
+            //take the last one is safe
+            // if(v.$t !==url){
+              columns[columnIndex] = v.$t;
+              columnIndex++;
+            // }
+          }
+        });
+
+        var content = columns[1];
+        var livestreamQuery = columns[2];
+        if(livestreamQuery){
+            if(livestreamQuery.match(/^live:/)){
+              type = 'livestream';
+            }
+        }
+
+        file= {
+            id:i,
+            url:url,
+            title:content,
+            livestreamQuery:livestreamQuery,
+            type:type
+        };
+        files.push(file)
+      })
+      console.log(files);
+      _service.files = files;
+      return files;
+  }
+
+  _service.openFoldr= function(id){
+    var url = getSpreadsheetUrl(id);
+    return Q($http.jsonp(url+"&callback=JSON_CALLBACK"))
+    .then(function(res) {
+      console.log(res);
+      return _parseFeed(res.data.feed);
+    })
+
+  }
+  return _service;
+
+})
 .service('DbService',function() {
   var _service = {};
   var db = null;
   console.log('Db init');
+
+// https://spreadsheets.google.com/feeds/list/1QAy9rgAy1Szhm5FwTCLHd6H3ZVR4QoGcQ8KiTpx_7dk/od6/public/values?alt=json
+
 
   _service.init=function() {
 
@@ -59,11 +140,13 @@ angular.module('starter.services', [])
   function facebookAPIFactory() {
 
         var service = {};
+
+        //For single point now, as we likely need individual endpoint for each node (but in bulk HTTP requests)
         service.searchEndpointBuilder = function() {
             var builder = {};
             var _keywords = [];
-            var _groupId = [];
-            var _page = [];
+            var _groupId = null;
+            var _page = null;
             builder.keywords = function(keywords) {
                 _keywords = keywords;
                 return this;

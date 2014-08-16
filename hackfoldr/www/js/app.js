@@ -48,43 +48,53 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       templateUrl: "templates/menu.html",
       controller: 'AppCtrl'
     })
-
-    .state('app.search', {
-      url: "/search",
-      views: {
-        'menuContent' :{
-          templateUrl: "templates/search.html"
-        }
-      }
-    })
-
     .state('app.browse', {
       url: "/browse",
       views: {
-        'menuContent' :{
+        'mainContent' :{
           templateUrl: "templates/browse.html"
         }
       }
     })
-    .state('app.playlists', {
-      url: "/playlists",
+    .state('app.files', {
+      url: "/files",
       views: {
         'menuContent' :{
-          templateUrl: "templates/playlists.html",
+          templateUrl: "templates/files.html",
+          controller: 'FileListsCtrl'
+        },
+        'mainContent' :{
+          templateUrl: "templates/files.html",
           controller: 'FileListsCtrl'
         }
       }
     })
-
+  .state('app.livestream', {
+    url: "/file/:fileId/livestream/:livestreamQuery",
+    views: {
+      'menuContent' :{
+        templateUrl: "templates/files.html",
+        controller: 'FileListsCtrl'
+      },
+      'mainContent' :{
+        templateUrl: "templates/livestream.html",
+        controller: 'FileCtrl'
+      }
+    }
+  })
     .state('app.single', {
-      url: "/playlists/:playlistId",
+      url: "/file/:fileId",
       views: {
         'menuContent' :{
-          templateUrl: "templates/playlist.html",
+          templateUrl: "templates/files.html",
+          controller: 'FileListsCtrl'
+        },
+        'mainContent' :{
+          templateUrl: "templates/file.html",
           controller: 'FileCtrl'
         }
       }
     });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/playlists');
+  $urlRouterProvider.otherwise('/app/files');
 });
