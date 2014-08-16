@@ -43,6 +43,7 @@
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/css/style.css \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/img/ionic.png \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/img/logo.png \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/js/app-config.js \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/js/app.js \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/js/controllers.js \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/js/index.js \
@@ -146,10 +147,9 @@
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/plugins/org.apache.cordova.file/www/requestFileSystem.js \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/plugins/org.apache.cordova.file/www/resolveLocalFileSystemURI.js \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/plugins/org.apache.cordova.file/www/android/FileSystem.js \
-/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/templates/browse.html \
-/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/templates/login.html \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/templates/file.html \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/templates/files.html \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/templates/livestream.html \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/templates/menu.html \
-/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/templates/playlist.html \
-/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/templates/playlists.html \
-/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/templates/search.html \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/templates/open-folder.html \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/AndroidManifest.xml \

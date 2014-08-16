@@ -1,0 +1,26 @@
+<div class="modal">
+  <ion-header-bar>
+    <h1 class="title">Open a foldr</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="closeOpenModal()">Close</button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <form ng-submit="doOpen()">
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">Hackfoldr id:</span>
+          <input type="text" ng-model="folderData.id">
+        </label>
+
+        <label class="item item-input">
+          <span class="input-label">OR Url to Hackfoldr:</span>
+          <input type="text" ng-model="folderData.url">
+        </label>
+        <label class="item">
+          <button class="button button-block button-positive" type="submit">Open</button>
+        </label>
+      </div>
+    </form>
+  </ion-content>
+</div>

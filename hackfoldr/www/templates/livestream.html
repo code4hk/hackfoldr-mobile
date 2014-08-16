@@ -1,0 +1,15 @@
+<ion-view title="Playlist">
+  <ion-content class="has-header">
+    <h1>{{fileTitle}}</h1>
+<div ng-controller="SNSCtrl">
+    <ion-list>
+      <ion-item class="feed-item" ng-class="{'enlarged-item':enlargedIndex===$index}" ng-click="enlargeItem($index)" ng-repeat="feed in feeds">
+        {{feed.message}}
+        {{feed.name}}
+        {{feed.description}}
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>
+
+</ion-view>

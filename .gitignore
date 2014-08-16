@@ -1,0 +1,12 @@
+# Android
+hackfoldr/platforms/android/assets/www
+hackfoldr/platforms/android/bin/
+hackfoldr/platforms/android/gen/
+hackfoldr/platforms/android/res/xml/config.xml
+hackfoldr/platforms/android/ant-build/
+hackfoldr/platforms/android/CordovaLib/
+# Emulator logs
+hackfoldr/platforms/ios/cordova/console.log
+#Important
+hackfoldr/www/js/app-config.js
+

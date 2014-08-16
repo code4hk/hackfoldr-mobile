@@ -4,6 +4,7 @@ platforms/android/bin/
 platforms/android/gen/
 platforms/android/res/xml/config.xml
 platforms/android/ant-build/
+platforms/android/CordovaLib/
  
  
 # Emulator logs
