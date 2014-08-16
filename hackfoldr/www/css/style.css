@@ -1,1 +1,5 @@
 /* Empty. Add your own CSS if you like */
+.feed-item.enlarged-item{
+  height:20rem;
+  white-space: normal;
+}

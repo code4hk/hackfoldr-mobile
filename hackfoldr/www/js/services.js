@@ -151,7 +151,11 @@ angular.module('starter.services', [])
             var _keywords = [];
             var _groupId = null;
             var _page = null;
+
+            var _query = null;
+
             builder.keywords = function(keywords) {
+                keywords = _escape(keywords);
                 _keywords = keywords;
                 return this;
             };
@@ -164,13 +168,46 @@ angular.module('starter.services', [])
                 return this;
             };
 
+            builder.query = function(query){
+              var trimQuery = query.match(/live:(.*)/);
+              if(trimQuery.length>1){
+                trimQuery = trimQuery[1];
+              }else{
+                throw new Error('cannot parse query');
+              }
+              _query = trimQuery;
+              return this;
+            }
+
             builder.build = function(token) {
                 var url ='';
+
+                if(_query){
+                  //or &&?
+                  //TODO this part should be out of fb api!
+                    var criteria = _query.split("&&");
+                    var criteriaPairs = Lazy(criteria).map(function(v){
+                        var criteriaPair = v.split("=");
+                        var pair = {};
+                        pair[criteriaPair[0]]=criteriaPair[1];
+                        return pair;
+                    }).toArray();
+
+                    console.log(criteriaPairs);
+                    Lazy(criteriaPairs).each(function(pair){
+                        if(pair["fbpage"]){
+                          _page = pair["fbpage"];
+                        }
+                    })
+
+
+                }
+
                 if(_page||_groupId){
                   var entity = _page || _groupId;
                   url = Lazy(["https://graph.facebook.com/",entity,"/feed?access_token=",token]).join('');
                 }else{
-                  url =    Lazy(["https://graph.facebook.com/search?access_token=",token,"&q=",_keywords,"&limit=20"]).join('');
+                  url = Lazy(["https://graph.facebook.com/search?access_token=",token,"&q=",_keywords,"&limit=20"]).join('');
 
                 }
 
@@ -210,18 +247,25 @@ angular.module('starter.services', [])
     var _escape = function(keywords){
       return keywords;
     }
-    _fbService.search = function(keywords) {
-        keywords = _escape(keywords);
-        var builder = facebookAPI.searchEndpointBuilder();
-        if (!keywords) {
-            throw new Error("Hackfoldr_Mobile: No Keywords");
-        }
+
+    // .group('614373621963841');
+
+
+    _fbService.searchContext = function(){
+      return facebookAPI.searchEndpointBuilder();
+    }
+
+    _fbService.search = function(context) {
+
+        // if (!keywords) {
+        //     throw new Error("Hackfoldr_Mobile: No Keywords");
+        // }
         // keywords = qs.escape(keywords.join(","));
         // builder = builder.keywords(keywords);
-        builder = builder.group('614373621963841');
+
         return _fbService.getToken()
         .then(function(token){
-            var endpoint = builder.build(token);
+            var endpoint = context.build(token);
             // return request.bind(this, endpoint);
             return Q($http.jsonp(endpoint+"&callback=JSON_CALLBACK")).then(function(res) {
               return res.data;

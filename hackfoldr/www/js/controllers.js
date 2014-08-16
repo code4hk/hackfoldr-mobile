@@ -45,22 +45,41 @@ angular.module('starter.controllers', ['starter.services'])
 
 .controller('SNSCtrl', ['$scope','DbService','snsService',function($scope,DbService,snsService) {
 
-$scope.feeds =[];
+  $scope.feeds =[];
+  console.log("SNS init");
+  console.log($scope.livestreamQuery);
 
-snsService["facebook"].search(["政總"])
+  $scope.enlargedIndex = -1;
+
+  $scope.$on('enlargedIndexUpdated',function($event, index){
+    $scope.enlargedIndex = index;
+  })
+  $scope.enlargeItem = function($index){
+    // $scope.enlargedIndex=$index;
+    if(  $scope.enlargedIndex!==$index){
+        $scope.$emit('enlargedIndexUpdated',$index);
+    }else{
+      $scope.$emit('enlargedIndexUpdated',-1);
+    }
+
+
+  }
+
+  var context = snsService["facebook"].searchContext().query($scope.livestreamQuery);
+
+  snsService["facebook"].search(context)
 .then(function(data){
 
   if(data.error){
     throw new Error(data.error.message);
   }
-  console.log(data.data);
+
   $scope.feeds = data.data;
-  console.log($scope.feeds);
   $scope.$digest();
 
 })
 .fail(function(err){
-  console.log('error');
+  console.error('error');
   console.log(err);
 });
 
@@ -85,8 +104,8 @@ snsService["facebook"].search(["政總"])
     $scope.currentFoldr = foldrService.current;
 
       DbService.init();
-        // PhoneGap is ready
-        $scope.files = [];
+        // PhoneGap is
+      $scope.files = [];
 
         _loadFiles($scope.currentFoldr.id);
 
@@ -114,6 +133,8 @@ snsService["facebook"].search(["政總"])
 }])
 .controller('FileCtrl', function($scope, $stateParams,$state,foldrService, $sce) {
   $scope.fileTitle = 'PageName';
+$scope.livestreamQuery = $stateParams.livestreamQuery;
+console.log($scope.livestreamQuery);
   console.log($stateParams);
   console.log('Redirect');
   console.log(foldrService.current.fileIndex);
@@ -124,8 +145,9 @@ snsService["facebook"].search(["政總"])
     console.log('updated');
     console.log(foldrService.current.fileIndex);
     if(type==='livestream'){
+
       console.log('update')
-        $state.go("app.livestream", {fileId:$stateParams.fileId, livestreamQuery:'abcde'}, {inherit:false,location:false});
+        $state.go("app.livestream", {fileId:$stateParams.fileId, livestreamQuery:foldrService.getFile().livestreamQuery}, {inherit:false,location:false});
     }else{
       $scope.inputUrl = foldrService.getFile().url;
       $scope.url = $sce.trustAsResourceUrl($scope.inputUrl);
