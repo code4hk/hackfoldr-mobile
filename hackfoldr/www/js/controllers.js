@@ -40,12 +40,19 @@ $scope.feeds =[];
 
 snsService["facebook"].search(["政總"])
 .then(function(data){
-  console.log(data.data);
 
+  if(data.error){
+    throw new Error(data.error.message);
+  }
+  console.log(data.data);
   $scope.feeds = data.data;
   console.log($scope.feeds);
   $scope.$digest();
 
+})
+.fail(function(err){
+  console.log('error');
+  console.log(err);
 });
 
 

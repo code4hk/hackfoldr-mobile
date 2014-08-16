@@ -8,3 +8,6 @@ platforms/android/ant-build/
  
 # Emulator logs
 platforms/ios/cordova/console.log
+
+#Important
+www/js/app-config.js

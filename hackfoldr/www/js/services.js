@@ -1,12 +1,7 @@
 angular.module('starter.services', [])
-.factory('snsConfig',function() {
-  return {
-    "facebook":{
-        "app_id":213,
-        "app_secret":"321"
-    }
-  }
-})
+.factory('snsConfig',['appConfig',function(appConfig) {
+  return appConfig.sns;
+}])
 .service('DbService',function() {
   var _service = {};
   var db = null;
@@ -85,11 +80,11 @@ angular.module('starter.services', [])
             builder.build = function(token) {
                 var url ='';
                 if(_page||_groupId){
-                  var entity = _page || _groupId; 
+                  var entity = _page || _groupId;
                   url = Lazy(["https://graph.facebook.com/",entity,"/feed?access_token=",token]).join('');
                 }else{
                   url =    Lazy(["https://graph.facebook.com/search?access_token=",token,"&q=",_keywords,"&limit=20"]).join('');
-                  
+
                 }
 
                 return encodeURI(url);
@@ -136,7 +131,7 @@ angular.module('starter.services', [])
         }
         // keywords = qs.escape(keywords.join(","));
         // builder = builder.keywords(keywords);
-        builder = builder.page('614373621963841');
+        builder = builder.group('614373621963841');
         return _fbService.getToken()
         .then(function(token){
             var endpoint = builder.build(token);
