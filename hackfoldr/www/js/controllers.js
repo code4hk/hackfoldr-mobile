@@ -41,7 +41,6 @@ angular.module('starter.controllers', ['starter.services'])
 
   };
   //test
-  $scope.doOpen();
 }])
 
 .controller('SNSCtrl', ['$scope','DbService','snsService',function($scope,DbService,snsService) {
@@ -70,27 +69,50 @@ snsService["facebook"].search(["政總"])
 
 .controller('FileListsCtrl', ['$scope','DbService','snsService','foldrService',function($scope,DbService,snsService,foldrService) {
     // document.addEventListener("deviceready", testing, false);
+
+    function _loadFiles(id){
+      foldrService.openFoldr(id)
+      .then(function(files){
+        $scope.files = files;
+        console.log('updated files');
+        console.log(files);
+        $scope.$apply();
+      });
+    }
+
+    //ideally should cache but now reload every time
   if(!$scope.currentFoldr){
     $scope.currentFoldr = foldrService.current;
+
+      DbService.init();
+        // PhoneGap is ready
+        $scope.files = [];
+
+        _loadFiles($scope.currentFoldr.id);
+
+    $scope.currentFileTitle = '';
     $scope.$watch('currentFoldr.id',function(newVal,oldVal){
-      console.log('open new foldr');
-      if(newVal!==''){
-        foldrService.openFoldr(newVal)
-        .then(function(files){
-          $scope.files = files;
-          console.log('updated files');
-        });
+      console.log('open new foldr',newVal);
+      console.log('oldVal',oldVal);
+      if(newVal!=='' && newVal !==oldVal){
+        _loadFiles(newVal);
       }
+    });
+
+    $scope.$watch('currentFoldr.fileIndex',function(newVal,oldVal){
+      console.log('updatedIndex',newVal);
+      if(newVal===-1){
+        return;
+      }
+      $scope.currentFileTitle = foldrService.files[foldrService.current.fileIndex].title;
+      console.log($scope.currentFileTitle);
     })
   }
 
 
-  DbService.init();
-    // PhoneGap is ready
-  $scope.files = [];
 
 }])
-.controller('FileCtrl', function($scope, $stateParams,$state,foldrService) {
+.controller('FileCtrl', function($scope, $stateParams,$state,foldrService, $sce) {
   $scope.fileTitle = 'PageName';
   console.log($stateParams);
   console.log('Redirect');
@@ -98,9 +120,15 @@ snsService["facebook"].search(["政總"])
   if(foldrService.files.length>0){
     var type = foldrService.files[parseInt($stateParams.fileId)].type;
     $scope.fileTitle = foldrService.files[parseInt($stateParams.fileId)].title;
+    foldrService.current.fileIndex = parseInt($stateParams.fileId);
+    console.log('updated');
+    console.log(foldrService.current.fileIndex);
     if(type==='livestream'){
       console.log('update')
         $state.go("app.livestream", {fileId:$stateParams.fileId, livestreamQuery:'abcde'}, {inherit:false,location:false});
+    }else{
+      $scope.inputUrl = foldrService.getFile().url;
+      $scope.url = $sce.trustAsResourceUrl($scope.inputUrl);
     }
   }
 

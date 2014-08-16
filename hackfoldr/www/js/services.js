@@ -20,6 +20,10 @@ angular.module('starter.services', [])
 
   }
 
+  _service.getFile = function(){
+    return _service.files[_service.current.fileIndex];
+  }
+
 
   function _parseFeed(feed){
     var files= [];
