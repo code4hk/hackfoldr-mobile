@@ -148,7 +148,11 @@ console.log($scope.livestreamQuery);
 
       console.log('update')
         $state.go("app.livestream", {fileId:$stateParams.fileId, livestreamQuery:foldrService.getFile().livestreamQuery}, {inherit:false,location:false});
-    }else{
+    } else if(type==="image"){
+      console.log('its images');
+        $state.go("app.image", {fileId:$stateParams.fileId, imageName:null}, {inherit:false,location:false});
+    }
+    else{
       $scope.inputUrl = foldrService.getFile().url;
       $scope.url = $sce.trustAsResourceUrl($scope.inputUrl);
     }

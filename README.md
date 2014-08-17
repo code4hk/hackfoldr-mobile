@@ -5,7 +5,13 @@ Hackfoldr mobile version
 
 The actual content of the app is under hackfoldr/www
 
-To build and run the app:
+##To run the app with ionic
+under `hackfoldr/`, run `ionic serve`
+It will run the app on browser using gulp with auto page refresh.
+
+`ionic emulate android` will build the apk and start emulator for android. With settings properly setup.
+
+##To build and run the app with cordova:
 
 0. Add android SDK to your PATH variable
 
@@ -25,3 +31,11 @@ e.g. $ echo $PATH
 
    Start an emulator in Genymotion, dray the apk file to the emulator
 
+Stack
+===========
+
+Cordova (installed by NPM)
+Ionic (AngularJS)
+Gulp
+Apache Ant/ Gradle (TODO)
+Android SDK (Android studio)

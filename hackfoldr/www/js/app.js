@@ -38,7 +38,6 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     }
   });
 })
-
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
 
@@ -82,6 +81,20 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       }
     }
   })
+
+    .state('app.image', {
+      url: "/file/:fileId/image/",
+      views: {
+        'menuContent' :{
+          templateUrl: "templates/files.html",
+          controller: 'FileListsCtrl'
+        },
+        'mainContent' :{
+          templateUrl: "templates/image.html",
+          controller: 'FileCtrl'
+        }
+      }
+    })
     .state('app.single', {
       url: "/file/:fileId",
       views: {
@@ -97,4 +110,10 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     });
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/app/files');
-});
+})
+// .run(["$templateCache",
+//     function ($templateCache) {
+//         $templateCache.put("template/iframe.html",
+//             "<div>iframe testing</div>");
+//     }
+// ]);;

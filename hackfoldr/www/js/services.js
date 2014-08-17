@@ -2,7 +2,7 @@ angular.module('starter.services', [])
 .factory('snsConfig',['appConfig',function(appConfig) {
   return appConfig.sns;
 }])
-.service('foldrService',function($http){
+.service('foldrService',function($http,CacheService){
 
   //Now we just support hackfoldr with Gspreadsheet. Better get a meta API
   //od6 for default sheet
@@ -32,7 +32,6 @@ angular.module('starter.services', [])
     var entries = Lazy(feed.entry);
     entries.each(function(entry,i){
         var url =   entry.title.$t;
-        console.log(entry);
         var file = {};
         var type = "normal";
         var content =null;
@@ -58,6 +57,10 @@ angular.module('starter.services', [])
             }
         }
 
+        if(url.match(/(.*)(.png|jpg|jpeg|gif$)/)){
+            type="image";
+        }
+
         file= {
             id:i,
             url:url,
@@ -76,14 +79,34 @@ angular.module('starter.services', [])
     var url = getSpreadsheetUrl(id);
     return Q($http.jsonp(url+"&callback=JSON_CALLBACK"))
     .then(function(res) {
-      console.log(res);
       return _parseFeed(res.data.feed);
+    })
+    .then(function(feed){
+      //cache feed
+      console.log('cache');
+      Lazy(feed).each(function(item){
+        if(item.type==='image'){
+          CacheService.cacheImage('1',item.url);
+        }
+      });
+      return feed;
     })
 
   }
   return _service;
 
 })
+.service('CacheService',['DbService','$http',function(DbService,$http){
+  var _service = {};
+  _service.cacheImage = function(id,url){
+    $http.get(url).then(function(data){
+      var imageData = data.data;
+    })
+  }
+
+  return _service;
+
+}])
 .service('DbService',function() {
   var _service = {};
   var db = null;
