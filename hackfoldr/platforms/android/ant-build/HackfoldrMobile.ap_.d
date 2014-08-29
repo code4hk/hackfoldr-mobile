@@ -149,6 +149,8 @@
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/plugins/org.apache.cordova.file/www/android/FileSystem.js \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/templates/file.html \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/templates/files.html \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/templates/iframe.html \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/templates/image.html \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/templates/livestream.html \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/templates/menu.html \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/templates/open-folder.html \

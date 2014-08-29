@@ -16,30 +16,30 @@ console.log(window);
 // });
 
 angular.module('starter', ['ionic', 'starter.controllers'])
-.factory('q', function () {
+  .factory('q', function() {
     return Q;
-})
-.factory('Lazy', function () {
+  })
+  .factory('Lazy', function() {
     return Lazy;
-})
-.factory('appConfig',function(){
-  return appConfig;
-})
-.run(function($ionicPlatform) {
-  $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-    if(window.cordova && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-    }
-    if(window.StatusBar) {
-      // org.apache.cordova.statusbar required
-      StatusBar.styleDefault();
-    }
-  });
-})
-.config(function($stateProvider, $urlRouterProvider) {
-  $stateProvider
+  })
+  .factory('appConfig', function() {
+    return appConfig;
+  })
+  .run(function($ionicPlatform) {
+    $ionicPlatform.ready(function() {
+      // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+      // for form inputs)
+      if (window.cordova && window.cordova.plugins.Keyboard) {
+        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+      }
+      if (window.StatusBar) {
+        // org.apache.cordova.statusbar required
+        StatusBar.styleDefault();
+      }
+    });
+  })
+  .config(function($stateProvider, $urlRouterProvider) {
+    $stateProvider
 
     .state('app', {
       url: "/app",
@@ -47,70 +47,98 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       templateUrl: "templates/menu.html",
       controller: 'AppCtrl'
     })
-    .state('app.browse', {
-      url: "/browse",
-      views: {
-        'mainContent' :{
-          templateUrl: "templates/browse.html"
+      .state('app.open', {
+        url: "/open",
+        views: {
+          'mainContent': {
+            templateUrl: "templates/files.html",
+            controller: function($scope) {
+              //only when the modal is ready
+              // $scope.open();
+            }
+          }
         }
-      }
-    })
-    .state('app.files', {
-      url: "/files",
-      views: {
-        'menuContent' :{
-          templateUrl: "templates/files.html",
-          controller: 'FileListsCtrl'
-        },
-        'mainContent' :{
-          templateUrl: "templates/files.html",
-          controller: 'FileListsCtrl'
-        }
-      }
-    })
-  .state('app.livestream', {
-    url: "/file/:fileId/livestream/:livestreamQuery",
-    views: {
-      'menuContent' :{
-        templateUrl: "templates/files.html",
-        controller: 'FileListsCtrl'
-      },
-      'mainContent' :{
-        templateUrl: "templates/livestream.html",
-        controller: 'FileCtrl'
-      }
-    }
-  })
+      })
+      .state('app.foldr', {
+        url: "/foldr/:foldrId",
+        views: {
+          'mainContent': {
+            templateUrl: "templates/files.html",
+            resolve: {
+              files: ['foldrService', '$stateParams',
+                function(foldrService, $stateParams) {
+                  console.log(foldrService);
+                  console.log($stateParams.foldrId);
+                  return foldrService.openFoldr($stateParams.foldrId);
+                }
+              ]
+            },
+            controller: function($scope, files,$stateParams) {
+              $scope.currentFoldrId = $stateParams.foldrId;
+              console.log('init foldr');
+              console.log(files);
+              $scope.files = files;
+            }
+          }
 
-    .state('app.image', {
+        }
+      })
+      .state('app.foldr.files', {
+        url: "/files",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/files.html",
+            controller: 'FileListsCtrl'
+          },
+          'mainContent': {
+            templateUrl: "templates/files.html",
+            controller: 'FileListsCtrl'
+          }
+        }
+      })
+      .state('app.foldr.livestream', {
+        url: "/file/:fileId/livestream/:livestreamQuery",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/files.html",
+            controller: 'FileListsCtrl'
+          },
+          'mainContent': {
+            templateUrl: "templates/livestream.html",
+            controller: 'FileCtrl'
+          }
+        }
+      })
+
+    .state('app.foldr.image', {
       url: "/file/:fileId/image/",
       views: {
-        'menuContent' :{
+        'menuContent': {
           templateUrl: "templates/files.html",
           controller: 'FileListsCtrl'
         },
-        'mainContent' :{
+        'mainContent': {
           templateUrl: "templates/image.html",
           controller: 'FileCtrl'
         }
       }
     })
-    .state('app.single', {
-      url: "/file/:fileId",
-      views: {
-        'menuContent' :{
-          templateUrl: "templates/files.html",
-          controller: 'FileListsCtrl'
-        },
-        'mainContent' :{
-          templateUrl: "templates/file.html",
-          controller: 'FileCtrl'
+      .state('app.foldr.single', {
+        url: "/file/:fileId",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/files.html",
+            controller: 'FileListsCtrl'
+          },
+          'mainContent': {
+            templateUrl: "templates/file.html",
+            controller: 'FileCtrl'
+          }
         }
-      }
-    });
-  // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/files');
-})
+      });
+    // if none of the above states are matched, use this as the fallback
+    $urlRouterProvider.otherwise('/app/open');
+  })
 // .run(["$templateCache",
 //     function ($templateCache) {
 //         $templateCache.put("template/iframe.html",

@@ -1,307 +1,206 @@
 angular.module('starter.services', [])
-.factory('snsConfig',['appConfig',function(appConfig) {
-  return appConfig.sns;
-}])
-.service('foldrService',function($http,CacheService){
+  .factory('snsConfig', ['appConfig',
+    function(appConfig) {
+      return appConfig.sns;
+    }
+  ])
+  .service('foldrService', function($http, CacheService,md5Util) {
 
-  //Now we just support hackfoldr with Gspreadsheet. Better get a meta API
-  //od6 for default sheet
-  var _service = {};
+    //Now we just support hackfoldr with Gspreadsheet. Better get a meta API
+    //od6 for default sheet
+    var _service = {};
 
-  _service.current = {
-    id:'',
-    fileIndex:-1
-  };
+    _service.current = {
+      id: '',
+      fileIndex: -1
+    };
 
-  _service.files = [];
+    _service.files = [];
 
-  function getSpreadsheetUrl(id){
-    return ['https://spreadsheets.google.com/feeds/list/',id,'/od6/public/values?alt=json'].join('');;
+    function getSpreadsheetUrl(id) {
+      return ['https://spreadsheets.google.com/feeds/list/', id, '/od6/public/values?alt=json'].join('');;
 
-  }
+    }
 
-  _service.getFile = function(){
-    return _service.files[_service.current.fileIndex];
-  }
+    _service.getFile = function() {
+      return _service.files[_service.current.fileIndex];
+    }
 
 
-  function _parseFeed(feed){
-    var files= [];
-    console.log('asdas');
-
-    var entries = Lazy(feed.entry);
-    entries.each(function(entry,i){
-        var url =   entry.title.$t;
+    function _parseFeed(feed) {
+      var files = [];
+      var entries = Lazy(feed.entry);
+      entries.each(function(entry, i) {
+        var url = entry.title.$t;
         var file = {};
         var type = "normal";
-        var content =null;
+        var content = null;
         var columnIndex = 0;
         var columns = [];
-//quick & dirty code
-        Lazy(entry).each(function(v,k){
+        //quick & dirty code
+        Lazy(entry).each(function(v, k) {
           var isColumn = !!(k.match(/.*gsx\$/));
-          if(isColumn){
+          if (isColumn) {
             //take the last one is safe
             // if(v.$t !==url){
-              columns[columnIndex] = v.$t;
-              columnIndex++;
+            columns[columnIndex] = v.$t;
+            columnIndex++;
             // }
           }
         });
 
         var content = columns[1];
         var livestreamQuery = columns[2];
-        if(livestreamQuery){
-            if(livestreamQuery.match(/^live:/)){
-              type = 'livestream';
-            }
+        if (livestreamQuery) {
+          if (livestreamQuery.match(/^live:/)) {
+            type = 'livestream';
+          }
         }
 
-        if(url.match(/(.*)(.png|jpg|jpeg|gif$)/)){
-            type="image";
+        if (url.match(/(.*)(.png|jpg|jpeg|gif$)/)) {
+          type = "image";
         }
 
-        file= {
-            id:i,
-            url:url,
-            title:content,
-            livestreamQuery:livestreamQuery,
-            type:type
+        file = {
+          id: i,
+          url: url,
+          title: content,
+          livestreamQuery: livestreamQuery,
+          type: type
         };
         files.push(file)
       })
       console.log(files);
       _service.files = files;
       return files;
-  }
+    }
 
-  _service.openFoldr= function(id){
-    var url = getSpreadsheetUrl(id);
-    return Q($http.jsonp(url+"&callback=JSON_CALLBACK"))
-    .then(function(res) {
-      return _parseFeed(res.data.feed);
-    })
-    .then(function(feed){
-      //cache feed
-      console.log('cache');
-      Lazy(feed).each(function(item){
-        if(item.type==='image'){
-          CacheService.cacheImage('1',item.url);
-        }
-      });
-      return feed;
-    })
+    _service.openFoldr = function(id) {
+      var url = getSpreadsheetUrl(id);
+      return Q($http.jsonp(url + "&callback=JSON_CALLBACK"))
+        .then(function(res) {
+          return _parseFeed(res.data.feed);
+        });
 
-  }
-  return _service;
+    }
+    return _service;
 
-})
-.service('CacheService',['DbService','$http',function(DbService,$http){
-  var _service = {};
-  _service.cacheImage = function(id,url){
-    $http.get(url).then(function(data){
-      var imageData = data.data;
-    })
-  }
+  })
+  .service('CacheService', ['DbService', '$http','q',
+    function(DbService, $http,Q) {
+      var _service = {};
+      _service.cacheImage = function(key, url) {
+        $http.get(url).then(function(data) {
+          var imageData = data.data;
+          DbService.insertCache(key, imageData);
 
-  return _service;
+        })
+      }
 
-}])
-.service('DbService',function() {
-  var _service = {};
-  var db = null;
-  console.log('Db init');
+      _service.getCacheImage = function(id) {
+        return DbService.getCache(id);
+      };
 
-// https://spreadsheets.google.com/feeds/list/1QAy9rgAy1Szhm5FwTCLHd6H3ZVR4QoGcQ8KiTpx_7dk/od6/public/values?alt=json
+      return _service;
+
+    }
+  ])
+  .service('DbService', ['q',function(Q) {
+    var _service = {};
+    var db = null;
+    console.log('Db init');
+
+    // https://spreadsheets.google.com/feeds/list/1QAy9rgAy1Szhm5FwTCLHd6H3ZVR4QoGcQ8KiTpx_7dk/od6/public/values?alt=json
 
 
-  _service.init=function() {
+    _service.init = function() {
 
       db = window.openDatabase("Database", "1.0", "PhoneGap Demo", 200000);
-      db.transaction(populateDB, errorCB, successCB);
-
-  }
-  function populateDB(tx) {
-       tx.executeSql('DROP TABLE IF EXISTS DEMO');
-       tx.executeSql('CREATE TABLE IF NOT EXISTS DEMO (id unique, data)');
-       tx.executeSql('INSERT INTO DEMO (id, data) VALUES (1, "First row")');
-       tx.executeSql('INSERT INTO DEMO (id, data) VALUES (2, "Second row")');
-  }
-  function errorCB(err) {
-      console.log("Error processing SQL: "+err.code);
-  }
+      db.transaction(initDB, errorCB, successCB);
 
 
-  function queryDB(tx) {
-      tx.executeSql('SELECT * FROM DEMO', [], querySuccess, errorCB);
-  }
+    }
 
-  function querySuccess(tx, results) {
+    _service.insertCache = function(key, data) {
+
+      //TODO base 64
+      function txInsertCahe(tx) {
+        var base64Img = btoa(encodeURIComponent(escape(data)));
+        tx.executeSql('INSERT INTO CACHE (key, data) VALUES (?, ?)',[key,base64Img]);
+      }
+      db.transaction(txInsertCahe, errorCB, successCB);
+
+      //return promise
+
+    }
+
+    _service.getCache = function(key) {
+      var results = [];
+      var deferred = Q.defer();
+      function querySuccess(tx, results) {
+        var len = results.rows.length;
+        console.log("IMAGE table: " + len + " rows found.");
+        for (var i = 0; i < len; i++) {
+          console.log("Row = " + i + " ID = " + results.rows.item(i).id);
+          console.log(results.rows.item(i));
+        }
+        results = results.rows;
+        console.log('results');
+        console.log(results);
+      }
+
+      function queryDB(tx) {
+        // tx.executeSql('SELECT * FROM CACHE where key = ?', [key]);
+        tx.executeSql('SELECT * FROM CACHE where key = ?', [key], querySuccess);
+      }
+      db.transaction(queryDB, function() {
+        console.log('err');
+      }, function() {
+        console.log('query success');
+        deferred.resolve(results);
+      });
+
+      return deferred.promise;
+    };
+
+    function initDB(tx) {
+      tx.executeSql('DROP TABLE IF EXISTS CACHE');
+      tx.executeSql('CREATE TABLE IF NOT EXISTS CACHE (id INTEGER PRIMARY KEY, key, data)');
+    }
+
+    function populateDB(tx) {
+      tx.executeSql('INSERT INTO DEMO (id, data) VALUES (1, "First row")');
+      tx.executeSql('INSERT INTO DEMO (id, data) VALUES (2, "Second row")');
+    }
+
+    function errorCB(err) {
+      console.log("Error processing SQL: " + err.code);
+    }
+
+
+
+    function querySuccess(tx, results) {
       // this will be empty since no rows were inserted.
       var len = results.rows.length;
-      console.log("DEMO table: " + len + " rows found.");
-      for (var i=0; i<len; i++){
-          console.log("Row = " + i + " ID = " + results.rows.item(i).id + " Data =  " + results.rows.item(i).data);
+      console.log("IMAGE table: " + len + " rows found.");
+      for (var i = 0; i < len; i++) {
+        console.log("Row = " + i + " ID = " + results.rows.item(i).id);
+        console.log(results.rows.item(i));
       }
-  }
+    }
 
 
-  function successCB() {
+    function successCB() {
       console.log("success!");
       console.log(db);
-      db.transaction(queryDB, errorCB);
-  }
-
-
-  function errorCB(err) {
-      alert("Error processing SQL: "+err.code);
-  }
-
-
-  return _service;
-
-})
-.service('snsService',['$http','q','snsConfig','Lazy',function($http,q,snsConfig,Lazy) {
-  var _services = {};
-
-  function facebookAPIFactory() {
-
-        var service = {};
-
-        //For single point now, as we likely need individual endpoint for each node (but in bulk HTTP requests)
-        service.searchEndpointBuilder = function() {
-            var builder = {};
-            var _keywords = [];
-            var _groupId = null;
-            var _page = null;
-
-            var _query = null;
-
-            builder.keywords = function(keywords) {
-                keywords = _escape(keywords);
-                _keywords = keywords;
-                return this;
-            };
-            builder.group = function(group) {
-                _groupId = group;
-                return this;
-            };
-            builder.page = function(page) {
-                _page = page;
-                return this;
-            };
-
-            builder.query = function(query){
-              var trimQuery = query.match(/live:(.*)/);
-              if(trimQuery.length>1){
-                trimQuery = trimQuery[1];
-              }else{
-                throw new Error('cannot parse query');
-              }
-              _query = trimQuery;
-              return this;
-            }
-
-            builder.build = function(token) {
-                var url ='';
-
-                if(_query){
-                  //or &&?
-                  //TODO this part should be out of fb api!
-                    var criteria = _query.split("&&");
-                    var criteriaPairs = Lazy(criteria).map(function(v){
-                        var criteriaPair = v.split("=");
-                        var pair = {};
-                        pair[criteriaPair[0]]=criteriaPair[1];
-                        return pair;
-                    }).toArray();
-
-                    console.log(criteriaPairs);
-                    Lazy(criteriaPairs).each(function(pair){
-                        if(pair["fbpage"]){
-                          _page = pair["fbpage"];
-                        }
-                    })
-
-
-                }
-
-                if(_page||_groupId){
-                  var entity = _page || _groupId;
-                  url = Lazy(["https://graph.facebook.com/",entity,"/feed?access_token=",token]).join('');
-                }else{
-                  url = Lazy(["https://graph.facebook.com/search?access_token=",token,"&q=",_keywords,"&limit=20"]).join('');
-
-                }
-
-                return encodeURI(url);
-            };
-            return builder;
-        };
-        return service;
-
-    };
-
-
-
-    var facebookAPI = facebookAPIFactory(snsConfig["facebook"].token);
-    // "keywords":["新界東北","政總","立法會"],
-    var _fbService = {};
-    // https://dev.twitter.com/docs/api/1.1/get/search/tweets
-    _fbService.getTokenCallback = function(body) {
-        return body.split('=')[1];
-    };
-
-    _fbService.getTokenUrl = function(configByFbgroup) {
-        // return util.format('https://graph.facebook.com/oauth/access_token?client_id=%s&client_secret=%s&grant_type=client_credentials', configByFbgroup.app_id, configByFbgroup.app_secret);
-        return "https://graph.facebook.com/oauth/access_token?client_id="+configByFbgroup.app_id+"&client_secret="+configByFbgroup.app_secret+'&grant_type=client_credentials';
     }
 
-    //TODO cache
-    _fbService.getToken = function(){
-      var getTokenPromise = Q($http.get(_fbService.getTokenUrl(snsConfig["facebook"])));
-      return getTokenPromise.then(function(res) {
-        var token = _fbService.getTokenCallback(res.data);
-        return token;
-      })
+
+    function errorCB(err) {
+      console.log(err);
     }
 
-    //TODO
-    var _escape = function(keywords){
-      return keywords;
-    }
 
-    // .group('614373621963841');
+    return _service;
 
-
-    _fbService.searchContext = function(){
-      return facebookAPI.searchEndpointBuilder();
-    }
-
-    _fbService.search = function(context) {
-
-        // if (!keywords) {
-        //     throw new Error("Hackfoldr_Mobile: No Keywords");
-        // }
-        // keywords = qs.escape(keywords.join(","));
-        // builder = builder.keywords(keywords);
-
-        return _fbService.getToken()
-        .then(function(token){
-            var endpoint = context.build(token);
-            // return request.bind(this, endpoint);
-            return Q($http.jsonp(endpoint+"&callback=JSON_CALLBACK")).then(function(res) {
-              return res.data;
-            })
-        })
-        .fail(function(err) {
-          console.log(arguments);
-          // printStacktrace(err);
-          throw err;
-        })
-    };
-
-    _services["facebook"]= _fbService;
-
-  return _services;
-}])
+  }])

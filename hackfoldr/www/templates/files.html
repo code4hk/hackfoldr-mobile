@@ -1,7 +1,7 @@
 <ion-view title="List">
   <ion-content class="has-header">
     <ion-list>
-      <ion-item ng-repeat="file in files" href="#/app/file/{{file.id}}">
+      <ion-item ng-repeat="file in files" href="#/app/foldr/{{currentFoldrId}}/file/{{file.id}}">
         {{file.title}}
       </ion-item>
     </ion-list>
