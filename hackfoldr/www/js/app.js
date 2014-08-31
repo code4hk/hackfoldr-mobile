@@ -49,50 +49,62 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     })
       .state('app.open', {
         url: "/open",
-        views: {
-          'mainContent': {
-            templateUrl: "templates/files.html",
-            controller: function($scope) {
-              //only when the modal is ready
-              // $scope.open();
-            }
-          }
+        templateUrl: "templates/landing.html",
+        controller: function($scope,$timeout) {
+          console.log('landing');
+          //only when the modal is ready
+          $timeout(function() {
+            //TODO change to ready
+            $scope.open();
+          },1000)
+
         }
+        // views: {
+        //   'appContent': {
+        //     templateUrl: "templates/landing.html",
+        //     controller: function($scope) {
+        //       console.log('landing');
+        //       //only when the modal is ready
+        //       // $scope.open();
+
+        //     }
+        //   }
+        // }
       })
-      .state('app.foldr', {
-        url: "/foldr/:foldrId",
+      .state('app.foldr.files', {
+        url: "/files",
         views: {
           'mainContent': {
             templateUrl: "templates/files.html",
-            resolve: {
-              files: ['foldrService', '$stateParams',
-                function(foldrService, $stateParams) {
-                  console.log(foldrService);
-                  console.log($stateParams.foldrId);
-                  return foldrService.openFoldr($stateParams.foldrId);
-                }
-              ]
-            },
-            controller: function($scope, files,$stateParams) {
-              $scope.currentFoldrId = $stateParams.foldrId;
+            controller: function($scope, $stateParams, files) {
               console.log('init foldr');
-              console.log(files);
+              $scope.currentFoldrId = $stateParams.foldrId;
+              $scope.files = files;
+
+            }
+          },
+          'menuContent': {
+            templateUrl: "templates/files.html",
+            controller: function($scope, $stateParams, files) {
+              console.log('init menu');
+              $scope.currentFoldrId = $stateParams.foldrId;
               $scope.files = files;
             }
           }
 
+
         }
       })
-      .state('app.foldr.files', {
-        url: "/files",
+      .state('app.foldr.single', {
+        url: "/file/:fileId",
         views: {
           'menuContent': {
             templateUrl: "templates/files.html",
             controller: 'FileListsCtrl'
           },
           'mainContent': {
-            templateUrl: "templates/files.html",
-            controller: 'FileListsCtrl'
+            templateUrl: "templates/file.html",
+            controller: 'FileCtrl'
           }
         }
       })
@@ -123,18 +135,26 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         }
       }
     })
-      .state('app.foldr.single', {
-        url: "/file/:fileId",
-        views: {
-          'menuContent': {
-            templateUrl: "templates/files.html",
-            controller: 'FileListsCtrl'
-          },
-          'mainContent': {
-            templateUrl: "templates/file.html",
-            controller: 'FileCtrl'
-          }
+      .state('app.foldr', {
+        url: "/foldr/:foldrId",
+        abstract: true,
+        templateUrl: "templates/foldr.html",
+        resolve: {
+          files: ['foldrService', '$stateParams',
+            function(foldrService, $stateParams) {
+              console.log('foldr states');
+              //failed to get $stateParams 2nd time here
+              console.log($stateParams.foldrId);
+              console.log(foldrService);
+              console.log($stateParams.foldrId);
+
+              return foldrService.openFoldr($stateParams.foldrId);
+            }
+          ]
         }
+
+
+
       });
     // if none of the above states are matched, use this as the fallback
     $urlRouterProvider.otherwise('/app/open');

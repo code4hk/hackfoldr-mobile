@@ -40,7 +40,7 @@ angular.module('starter.controllers', ['starter.services'])
 
       foldrService.current.id = id;
       console.log(foldrService.current);
-      $state.go("app.foldr", {
+      $state.go("app.foldr.files", {
         foldrId: foldrService.current.id
       });
       $timeout(function() {
@@ -51,7 +51,7 @@ angular.module('starter.controllers', ['starter.services'])
     //test
 
 
-
+    console.log('init');
   }
 ])
 
@@ -105,7 +105,6 @@ angular.module('starter.controllers', ['starter.services'])
     // document.addEventListener("deviceready", testing, false);
     console.log('file list ctrl init');
 
-
     // .then(function(feed) {
     //           //cache feed
     //           //TODO bulk sql
@@ -143,7 +142,7 @@ angular.module('starter.controllers', ['starter.services'])
       $scope.files = files;
       console.log('updated files');
       console.log(files);
-      $scope.$apply();
+      // $scope.$apply();
     }
 
     //ideally should cache but now reload every time
@@ -197,6 +196,7 @@ angular.module('starter.controllers', ['starter.services'])
         console.log('update')
         $state.go("app.foldr.livestream", {
           fileId: $stateParams.fileId,
+          foldrId : $stateParams.foldrId,
           livestreamQuery: foldrService.getFile().livestreamQuery
         }, {
           inherit: false,
@@ -204,8 +204,10 @@ angular.module('starter.controllers', ['starter.services'])
         });
       } else if (type === "image") {
         console.log('its images');
+        //inject here
         $state.go("app.foldr.image", {
           fileId: $stateParams.fileId,
+          foldrId : $stateParams.foldrId,
           imageName: null
         }, {
           inherit: false,

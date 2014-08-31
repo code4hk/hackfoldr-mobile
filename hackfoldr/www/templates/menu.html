@@ -1,18 +1,1 @@
-
-<ion-side-menus>
-  <ion-pane ion-side-menu-content>
-    <ion-nav-bar class="bar-stable nav-title-slide-ios7">
-      <ion-nav-buttons side="left">
-        <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
-      </ion-nav-buttons>
-      <div class="buttons pull-right">
-        <button class="button" ng-click="open()">Open</button>
-      </div>
-    </ion-nav-bar>
-    <ion-nav-view name="mainContent" animation="slide-left-right"></ion-nav-view>
-  </ion-pane>
-
-  <ion-side-menu side="left">
-    <ion-nav-view name="menuContent" animation="slide-left-right"></ion-nav-view>
-  </ion-side-menu>
-</ion-side-menus>
+<ui-view />
