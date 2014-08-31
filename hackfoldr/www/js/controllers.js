@@ -29,19 +29,35 @@ angular.module('starter.controllers', ['starter.services'])
     };
 
 
+
+    // //wild guess as workaround
+    function checkISEtherCalc(id){
+      return id.length<30;
+    }
+    
+    var isEtherCalc = false;
+
+
     // Perform the login action when the user submits the login form
     $scope.doOpen = function() {
       console.log('Doing login', $scope.folderData);
 
       // Simulate a login delay. Remove this and replace with your login
       // code if using a login system
-
-      var id = '1QAy9rgAy1Szhm5FwTCLHd6H3ZVR4QoGcQ8KiTpx_7dk';
-
+      // $scope.folderData.id = '1QAy9rgAy1Szhm5FwTCLHd6H3ZVR4QoGcQ8KiTpx_7dk';
+      var id=$scope.folderData.id;
+      if(!id && $scope.folderData.url){
+//Trace redirect
+        var url = $scope.folderData.url;
+        //TODO support true go to the site instead of url, to support self-hosted hackfoldr
+        id = url.match("hack.etblue.tw/([^/]*)")[1];
+        isEtherCalc = checkISEtherCalc(id);
+      }
       foldrService.current.id = id;
       console.log(foldrService.current);
       $state.go("app.foldr.files", {
-        foldrId: foldrService.current.id
+        foldrId: foldrService.current.id,
+        isEtherCalc:isEtherCalc
       });
       $timeout(function() {
         $scope.closeOpenModal();

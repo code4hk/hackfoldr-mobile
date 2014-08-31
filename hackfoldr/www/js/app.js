@@ -136,7 +136,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
       }
     })
       .state('app.foldr', {
-        url: "/foldr/:foldrId",
+        url: "/foldr/:foldrId?isEtherCalc",
         abstract: true,
         templateUrl: "templates/foldr.html",
         resolve: {
@@ -146,9 +146,9 @@ angular.module('starter', ['ionic', 'starter.controllers'])
               //failed to get $stateParams 2nd time here
               console.log($stateParams.foldrId);
               console.log(foldrService);
-              console.log($stateParams.foldrId);
+              var isEtherCalc = !!$stateParams.isEtherCalc
 
-              return foldrService.openFoldr($stateParams.foldrId);
+              return foldrService.openFoldr($stateParams.foldrId,isEtherCalc);
             }
           ]
         }

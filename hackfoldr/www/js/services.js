@@ -19,13 +19,42 @@ angular.module('starter.services', [])
 
     function getSpreadsheetUrl(id) {
       return ['https://spreadsheets.google.com/feeds/list/', id, '/od6/public/values?alt=json'].join('');;
+    }
 
+    function getEtherCalcUrl(id){
+      // return ['https://ethercalc.org/_/', id, '/cells/'].join('');
+      //Use csv, json api is slow
+      return ['https://ethercalc.org/_/', id, '/csv/'].join('');
     }
 
     _service.getFile = function() {
       return _service.files[_service.current.fileIndex];
     }
 
+    function _parseEtherCalcFeed(data){
+      var files = [];
+      var json = csv2JSON(data,["url","key"]);
+      console.log(json);
+      return files;
+    }
+
+
+      function csv2JSON(csv,headers){
+        var lines=csv.split("\n");
+        var result = [];
+        headers= headers? headers : lines[0].split(",");
+        for(var i=1;i<lines.length;i++){
+          var obj = {};
+          var currentline=lines[i].split(",");
+          for(var j=0;j<headers.length;j++){
+            obj[headers[j]] = currentline[j];
+          }
+          result.push(obj);
+        }
+        
+        return result; //JavaScript object
+        // return JSON.stringify(result); //JSON
+      }
 
     function _parseFeed(feed) {
       var files = [];
@@ -75,12 +104,24 @@ angular.module('starter.services', [])
       return files;
     }
 
-    _service.openFoldr = function(id) {
-      var url = getSpreadsheetUrl(id);
-      return Q($http.jsonp(url + "&callback=JSON_CALLBACK"))
-        .then(function(res) {
-          return _parseFeed(res.data.feed);
-        });
+    _service.openFoldr = function(id,isEtherCalc) {
+
+      if(!isEtherCalc){
+        var url = getSpreadsheetUrl(id);
+        return Q($http.jsonp(url + "&callback=JSON_CALLBACK"))
+          .then(function(res) {
+            return _parseFeed(res.data.feed);
+          });  
+      }else{
+        var url = getEtherCalcUrl(id);
+        return Q($http.get(url))
+          .then(function(res) {
+            return _parseEtherCalcFeed(res.data);
+          }); 
+
+      }
+
+      
 
     }
     return _service;
