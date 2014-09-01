@@ -35,7 +35,8 @@ angular.module('starter.services', [])
       return {
         id:id,
         title: title,
-        type:"folder"
+        type:"folder",
+        files:[]
       };
     }
 
@@ -44,20 +45,27 @@ angular.module('starter.services', [])
       var json = csv2JSON(data,["url","key","folder"]);
       console.log(json);
 
-
-
+      //stack
+      var inFolder = false;
+      // var folderFiles = [];
+      var folder = null;
       Lazy(json).each(function(v, i) {
-
         var file = {};
         var isFolder = v.folder==="expand";
         if(isFolder){
-          file = _getFolder(i,v.key);
+          inFolder = true;
+          folder = _getFolder(i,v.key);
         }else{
           file = _parseFile(i,v.url,v.key,v.livestreamQuery);
-
         }
-
-        files.push(file);
+        if(inFolder && !isFolder){
+          folder.files.push(file);
+        }else{
+          files.push(folder);
+          // if(isFolder){
+          //   folder = null;
+          // }
+        }
       });
 
       return files;
