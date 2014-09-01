@@ -34,7 +34,7 @@ angular.module('starter.controllers', ['starter.services'])
     function checkISEtherCalc(id){
       return id.length<30;
     }
-    
+
     var isEtherCalc = false;
 
 
@@ -51,8 +51,8 @@ angular.module('starter.controllers', ['starter.services'])
         var url = $scope.folderData.url;
         //TODO support true go to the site instead of url, to support self-hosted hackfoldr
         id = url.match("hack.etblue.tw/([^/]*)")[1];
-        isEtherCalc = checkISEtherCalc(id);
       }
+      isEtherCalc = checkISEtherCalc(id);
       foldrService.current.id = id;
       console.log(foldrService.current);
       $state.go("app.foldr.files", {

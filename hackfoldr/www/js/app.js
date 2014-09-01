@@ -146,7 +146,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
               //failed to get $stateParams 2nd time here
               console.log($stateParams.foldrId);
               console.log(foldrService);
-              var isEtherCalc = !!$stateParams.isEtherCalc
+              var isEtherCalc = $stateParams.isEtherCalc ==="true";
 
               return foldrService.openFoldr($stateParams.foldrId,isEtherCalc);
             }

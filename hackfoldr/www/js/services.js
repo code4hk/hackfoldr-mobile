@@ -31,10 +31,35 @@ angular.module('starter.services', [])
       return _service.files[_service.current.fileIndex];
     }
 
+    function _getFolder(id,title){
+      return {
+        id:id,
+        title: title,
+        type:"folder"
+      };
+    }
+
     function _parseEtherCalcFeed(data){
       var files = [];
-      var json = csv2JSON(data,["url","key"]);
+      var json = csv2JSON(data,["url","key","folder"]);
       console.log(json);
+
+
+
+      Lazy(json).each(function(v, i) {
+
+        var file = {};
+        var isFolder = v.folder==="expand";
+        if(isFolder){
+          file = _getFolder(i,v.key);
+        }else{
+          file = _parseFile(i,v.url,v.key,v.livestreamQuery);
+
+        }
+
+        files.push(file);
+      });
+
       return files;
     }
 
@@ -51,10 +76,46 @@ angular.module('starter.services', [])
           }
           result.push(obj);
         }
-        
+
         return result; //JavaScript object
         // return JSON.stringify(result); //JSON
       }
+
+
+
+    function _parseFile(id,url,content,livestreamQuery,isFolder){
+      var type = "normal";
+      if (livestreamQuery) {
+        if (livestreamQuery.match(/^live:/)) {
+          type = 'livestream';
+        }
+      }
+
+      if (url.match(/(.*)(.png|jpg|jpeg|gif$)/)) {
+        type = "image";
+      }
+
+      var file = {
+        id: id,
+        url: url,
+        title: content,
+        livestreamQuery: livestreamQuery,
+        type: type
+      };
+      return file;
+    }
+
+    function _parseRowAsFile(id,columns){
+      var url = columns[0];
+      var content = columns[1];
+      var livestreamQuery = columns[2];
+      var isFolder = columns[3] === "expand";
+      if(isFolder){
+        return _getFolder(id,content);
+      }
+
+      return  _parseFile(id,url,content,livestreamQuery);
+    }
 
     function _parseFeed(feed) {
       var files = [];
@@ -62,7 +123,6 @@ angular.module('starter.services', [])
       entries.each(function(entry, i) {
         var url = entry.title.$t;
         var file = {};
-        var type = "normal";
         var content = null;
         var columnIndex = 0;
         var columns = [];
@@ -78,25 +138,7 @@ angular.module('starter.services', [])
           }
         });
 
-        var content = columns[1];
-        var livestreamQuery = columns[2];
-        if (livestreamQuery) {
-          if (livestreamQuery.match(/^live:/)) {
-            type = 'livestream';
-          }
-        }
-
-        if (url.match(/(.*)(.png|jpg|jpeg|gif$)/)) {
-          type = "image";
-        }
-
-        file = {
-          id: i,
-          url: url,
-          title: content,
-          livestreamQuery: livestreamQuery,
-          type: type
-        };
+        var file = _parseRowAsFile(i,columns);
         files.push(file)
       })
       console.log(files);
@@ -111,17 +153,17 @@ angular.module('starter.services', [])
         return Q($http.jsonp(url + "&callback=JSON_CALLBACK"))
           .then(function(res) {
             return _parseFeed(res.data.feed);
-          });  
+          });
       }else{
         var url = getEtherCalcUrl(id);
         return Q($http.get(url))
           .then(function(res) {
             return _parseEtherCalcFeed(res.data);
-          }); 
+          });
 
       }
 
-      
+
 
     }
     return _service;
