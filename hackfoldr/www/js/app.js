@@ -76,23 +76,12 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         views: {
           'mainContent': {
             templateUrl: "templates/files.html",
-            controller: function($scope, $stateParams, files) {
-              console.log('init foldr');
-              $scope.currentFoldrId = $stateParams.foldrId;
-              $scope.files = files;
-
-            }
+            controller: 'FileListsCtrl'
           },
           'menuContent': {
             templateUrl: "templates/files.html",
-            controller: function($scope, $stateParams, files) {
-              console.log('init menu');
-              $scope.currentFoldrId = $stateParams.foldrId;
-              $scope.files = files;
-            }
+            controller: 'FileListsCtrl'
           }
-
-
         }
       })
       .state('app.foldr.single', {

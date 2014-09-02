@@ -115,85 +115,109 @@ angular.module('starter.controllers', ['starter.services'])
 
   }
 ])
+.controller('FileListsCtrl',['$scope','$stateParams','files',function($scope, $stateParams, files) {
+  console.log('init foldr');
+  $scope.currentFoldrId = $stateParams.foldrId;
+  $scope.files = files;
 
-.controller('FileListsCtrl', ['$scope', 'DbService', 'snsService', 'foldrService', 'files',
-  function($scope, DbService, snsService, foldrService, files) {
-    // document.addEventListener("deviceready", testing, false);
-    console.log('file list ctrl init');
+  var displayedFiles = [];
+  //quite stupid to make it nested then flatten it back
 
-    // .then(function(feed) {
-    //           //cache feed
-    //           //TODO bulk sql
-    //           var CACHE_EVERYTHING_WHEN_INIT=true;
-
-    //           if(!CACHE_EVERYTHING_WHEN_INIT){
-    //             return;
-    //           }
-    //           //If enabled cache when start
-    //           // Lazy(feed).each(function(item) {
-    //           //   if (item.type === 'image') {
-    //           //     if(!item.url){
-    //           //       return;
-    //           //     }
-    //           //     var key=md5Util.md5(item.url);
-    //           //     CacheService.getCacheImage(key)
-    //           //     .then(function(results) {
-    //           //       console.log(arguments);
-    //           //       if(results.length>0){
-    //           //         console.log('cache hit');
-    //           //       }else{
-    //           //         //cache miss;
-    //           //         console.log('cache miss');
-    //           //         CacheService.cacheImage(key,item.url);
-    //           //       }
-    //           //     });
-
-    //           //   }
-    //           // });
-    //           return feed;
-    //         })
+  Lazy($scope.files).each(function(file){
 
 
-    function _loadFiles(id) {
-      $scope.files = files;
-      console.log('updated files');
-      console.log(files);
-      // $scope.$apply();
+    if(file.type==="folder"){
+      file.files = Lazy(file.files).map(function(subFile){
+          subFile.parent = file.id;
+          return subFile;
+      }).value();
+      displayedFiles.push(file.files);
+    }else{
+      displayedFiles.push(file);
     }
+  });
 
-    //ideally should cache but now reload every time
-    if (!$scope.currentFoldr) {
-      $scope.currentFoldr = foldrService.current;
+  $scope.displayedFiles = Lazy(displayedFiles).flatten().value();
 
-      DbService.init();
-      // PhoneGap is
-      $scope.files = [];
-
-      _loadFiles($scope.currentFoldr.id);
-
-      $scope.currentFileTitle = '';
-      $scope.$watch('currentFoldr.id', function(newVal, oldVal) {
-        console.log('open new foldr', newVal);
-        console.log('oldVal', oldVal);
-        if (newVal !== '' && newVal !== oldVal) {
-          _loadFiles(newVal);
-        }
-      });
-
-      $scope.$watch('currentFoldr.fileIndex', function(newVal, oldVal) {
-        console.log('updatedIndex', newVal);
-        if (newVal === -1) {
-          return;
-        }
-        $scope.currentFileTitle = foldrService.files[foldrService.current.fileIndex].title;
-        console.log($scope.currentFileTitle);
-      })
-    }
-
-
-
-  }
-])
+}])
+// .controller('FileListsCtrl2', ['$scope', 'DbService', 'snsService', 'foldrService', 'files',
+//   function($scope, DbService, snsService, foldrService, files) {
+//     // document.addEventListener("deviceready", testing, false);
+//     console.log('file list ctrl init');
+//
+//     // .then(function(feed) {
+//     //           //cache feed
+//     //           //TODO bulk sql
+//     //           var CACHE_EVERYTHING_WHEN_INIT=true;
+//
+//     //           if(!CACHE_EVERYTHING_WHEN_INIT){
+//     //             return;
+//     //           }
+//     //           //If enabled cache when start
+//     //           // Lazy(feed).each(function(item) {
+//     //           //   if (item.type === 'image') {
+//     //           //     if(!item.url){
+//     //           //       return;
+//     //           //     }
+//     //           //     var key=md5Util.md5(item.url);
+//     //           //     CacheService.getCacheImage(key)
+//     //           //     .then(function(results) {
+//     //           //       console.log(arguments);
+//     //           //       if(results.length>0){
+//     //           //         console.log('cache hit');
+//     //           //       }else{
+//     //           //         //cache miss;
+//     //           //         console.log('cache miss');
+//     //           //         CacheService.cacheImage(key,item.url);
+//     //           //       }
+//     //           //     });
+//
+//     //           //   }
+//     //           // });
+//     //           return feed;
+//     //         })
+//
+//
+//     function _loadFiles(id) {
+//       $scope.files = files;
+//       console.log('updated files');
+//       console.log(files);
+//       // $scope.$apply();
+//     }
+//
+//     //ideally should cache but now reload every time
+//     if (!$scope.currentFoldr) {
+//       $scope.currentFoldr = foldrService.current;
+//
+//       DbService.init();
+//       // PhoneGap is
+//       $scope.files = [];
+//
+//       _loadFiles($scope.currentFoldr.id);
+//
+//       $scope.currentFileTitle = '';
+//       $scope.$watch('currentFoldr.id', function(newVal, oldVal) {
+//         console.log('open new foldr', newVal);
+//         console.log('oldVal', oldVal);
+//         if (newVal !== '' && newVal !== oldVal) {
+//           _loadFiles(newVal);
+//         }
+//       });
+//
+//       $scope.$watch('currentFoldr.fileIndex', function(newVal, oldVal) {
+//         console.log('updatedIndex', newVal);
+//         if (newVal === -1) {
+//           return;
+//         }
+//         $scope.currentFileTitle = foldrService.files[foldrService.current.fileIndex].title;
+//         console.log($scope.currentFileTitle);
+//       })
+//     }
+//
+//
+//
+//   }
+// ])
   .controller('FileCtrl', function($scope, $stateParams, $state, foldrService, $sce) {
     $scope.fileTitle = 'PageName';
     $scope.livestreamQuery = $stateParams.livestreamQuery;

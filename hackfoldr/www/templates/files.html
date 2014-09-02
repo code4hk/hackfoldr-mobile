@@ -1,8 +1,13 @@
 <ion-view title="List">
   <ion-content class="has-header">
     <ion-list>
-      <ion-item ng-repeat="file in files" href="#/app/foldr/{{currentFoldrId}}/file/{{file.id}}">
+      <ion-item ng-repeat="file in displayedFiles" href="#/app/foldr/{{currentFoldrId}}/file/{{file.id}}">
+      {{displayedFiles}}
         {{file.title}}
+        <!-- ng-if="!file.type=='folder'" -->
+
+         <!-- <ion-item  ng-repeat="file in file.files" class="feed-item" ng-class="{'enlarged-item':enlargedIndex===$index}" ng-click="enlargeItem($index)">
+        </ion-item> -->
       </ion-item>
     </ion-list>
   </ion-content>
