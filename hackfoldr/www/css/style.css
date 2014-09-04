@@ -4,3 +4,11 @@
   max-height:20rem;
   white-space: normal;
 }
+
+
+.file.folder a{
+  background-color: rgba(0,0,0,.01);
+  
+  /*background:black;*/
+  border-left: 0.4rem solid ;
+}

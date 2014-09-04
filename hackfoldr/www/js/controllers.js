@@ -120,14 +120,22 @@ angular.module('starter.controllers', ['starter.services'])
   $scope.currentFoldrId = $stateParams.foldrId;
   $scope.files = files;
 
+  $scope.opened = {};
+
+      // file.isShowFile;
+      //TODO perf optimization to avoid inline fx()
+  $scope.isShowFile = function(file){
+    return file.type==="folder" || $scope.opened[file.parent];
+  }
+
   var displayedFiles = [];
   //quite stupid to make it nested then flatten it back
 
   Lazy($scope.files).each(function(file){
 
-
     displayedFiles.push(file);
     if(file.type==="folder"){
+      $scope.opened[file.id] = false;
       file.files = Lazy(file.files).map(function(subFile){
           subFile.parent = file.id;
           return subFile;
@@ -136,7 +144,24 @@ angular.module('starter.controllers', ['starter.services'])
     }
   });
 
+  $scope.open= function(file){
+    // console.log('hi');
+    if(file.type==="folder"){
+      $scope.openFolder(file.id);
+    }
+
+
+  }
+
   $scope.displayedFiles = Lazy(displayedFiles).flatten().value();
+
+  $scope.openFolder = function(id,isOpen){
+    var toBeIsOpen = !$scope.opened[id];
+    if(typeof isOpen ==="boolean"){
+        toBeIsOpen = isOpen
+    }
+    $scope.opened[id] = toBeIsOpen;
+  }
 
 }])
 // .controller('FileListsCtrl2', ['$scope', 'DbService', 'snsService', 'foldrService', 'files',

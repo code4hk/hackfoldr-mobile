@@ -1,10 +1,14 @@
 <ion-view title="List">
   <ion-content class="has-header">
     <ion-list>
-      <ion-item ng-repeat="file in displayedFiles" href="#/app/foldr/{{currentFoldrId}}/file/{{file.id}}">
-        {{file.title}}
+      <ion-item ng-repeat="file in displayedFiles" ng-class="{'folder':file.type=='folder'}" class="file" href="#/app/foldr/{{currentFoldrId}}/file/{{file.id}}" ng-click="open(file)" ng-if="isShowFile(file)" >
+        <span class="pull-right" style="float:right">
+          <!-- android-folder -->
+          <i class="ion-folder" ng-class="{'ion-folder':file.type=='folder', 'ion-document':file.type!='folder'}" ng-show="file.type=='folder'" style="font-size:1.5rem" data-pack="default" data-tags="snail, mail"></i>
+            <!-- <i class="ion-android-folder" ng-show="file.type=='folder'" style="font-size:1.5rem" data-pack="default" data-tags="snail, mail"></i> -->
+           <i class="ion-document" ng-show="file.type!='folder'" style="font-size:1.5rem" data-pack="default" data-tags="snail, mail"></i>
+        </span>
         <!-- ng-if="!file.type=='folder'" -->
-
          <!-- <ion-item  ng-repeat="file in file.files" class="feed-item" ng-class="{'enlarged-item':enlargedIndex===$index}" ng-click="enlargeItem($index)">
         </ion-item> -->
       </ion-item>
