@@ -106,7 +106,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
           },
           'mainContent': {
             templateUrl: "templates/livestream.html",
-            controller: 'FileCtrl'
+            controller: 'SNSCtrl'
           }
         }
       })
@@ -135,8 +135,8 @@ angular.module('starter', ['ionic', 'starter.controllers'])
               //failed to get $stateParams 2nd time here
               console.log($stateParams.foldrId);
               console.log(foldrService);
+              //Pbm here: keep re-open everyt
               var isEtherCalc = $stateParams.isEtherCalc ==="true";
-
               return foldrService.openFoldr($stateParams.foldrId,isEtherCalc);
             }
           ]

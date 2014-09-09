@@ -6,6 +6,7 @@ angular.module('starter.controllers', ['starter.services'])
     // Form data for the login modal
     $scope.folderData = {};
 
+    $scope.folderData.url = 'hack.etblue.tw/';
     // Create the login modal that we will use later
     $ionicModal.fromTemplateUrl('templates/open-folder.html', {
       scope: $scope
@@ -46,6 +47,7 @@ angular.module('starter.controllers', ['starter.services'])
       // code if using a login system
       // $scope.folderData.id = '1QAy9rgAy1Szhm5FwTCLHd6H3ZVR4QoGcQ8KiTpx_7dk';
       var id=$scope.folderData.id;
+
       if(!id && $scope.folderData.url){
 //Trace redirect
         var url = $scope.folderData.url;
@@ -71,13 +73,12 @@ angular.module('starter.controllers', ['starter.services'])
   }
 ])
 
-.controller('SNSCtrl', ['$scope', 'DbService', 'snsService',
-  function($scope, DbService, snsService) {
+.controller('SNSCtrl', ['$scope', 'DbService', 'snsService','$stateParams',
+  function($scope, DbService, snsService,$stateParams) {
 
     $scope.feeds = [];
     console.log("SNS init");
-    console.log($scope.livestreamQuery);
-
+    var livestreamQuery = $stateParams.livestreamQuery;
     $scope.enlargedIndex = -1;
 
     $scope.$on('enlargedIndexUpdated', function($event, index) {
@@ -94,7 +95,7 @@ angular.module('starter.controllers', ['starter.services'])
 
     }
 
-    var context = snsService["facebook"].searchContext().query($scope.livestreamQuery);
+    var context = snsService["facebook"].searchContext().query(livestreamQuery);
 
     snsService["facebook"].search(context)
       .then(function(data) {
@@ -115,7 +116,8 @@ angular.module('starter.controllers', ['starter.services'])
 
   }
 ])
-.controller('FileListsCtrl',['$scope','$stateParams','files',function($scope, $stateParams, files) {
+.controller('FileListsCtrl',['$scope','$stateParams','files','$state','FileUtil',
+function($scope, $stateParams, files,$state,fileUtil) {
   console.log('init foldr');
   $scope.currentFoldrId = $stateParams.foldrId;
   $scope.files = files;
@@ -128,29 +130,46 @@ angular.module('starter.controllers', ['starter.services'])
     return file.type==="folder" || $scope.opened[file.parent];
   }
 
-  var displayedFiles = [];
+
+  var displayedFiles = fileUtil.initDisplayedFiles(files);
   //quite stupid to make it nested then flatten it back
+  //
+  // Lazy($scope.files).each(function(file){
+  //
+  //   displayedFiles.push(file);
+  //   if(file.type==="folder"){
+  //     $scope.opened[file.id] = false;
+  //     file.files = Lazy(file.files).map(function(subFile){
+  //         subFile.parent = file.id;
+  //         return subFile;
+  //     }).value();
+  //     displayedFiles.push(file.files);
+  //   }
+  // });
 
-  Lazy($scope.files).each(function(file){
 
-    displayedFiles.push(file);
-    if(file.type==="folder"){
-      $scope.opened[file.id] = false;
-      file.files = Lazy(file.files).map(function(subFile){
-          subFile.parent = file.id;
-          return subFile;
-      }).value();
-      displayedFiles.push(file.files);
-    }
-  });
 
   $scope.open= function(file){
     // console.log('hi');
     if(file.type==="folder"){
       $scope.openFolder(file.id);
+    }else{
+    $state.go("app.foldr.single", {
+        fileId: file.id,
+        isEtherCalc:true,
+        foldrId : $stateParams.foldrId,
+        imageName: null
+      }, {
+        inherit: true,
+        location: false
+      });
+
     }
+    console.log('open');
 
+    // displayedFiles
 
+// #/app/foldr/{{currentFoldrId}}/file/{{file.id}}?isEtherCalc=true
   }
 
   $scope.displayedFiles = Lazy(displayedFiles).flatten().value();
@@ -242,26 +261,29 @@ angular.module('starter.controllers', ['starter.services'])
 //
 //   }
 // ])
-  .controller('FileCtrl', function($scope, $stateParams, $state, foldrService, $sce) {
+  .controller('FileCtrl', ['$scope', '$stateParams', '$state', 'foldrService', '$sce','files', 'FileUtil',function($scope, $stateParams, $state, foldrService, $sce,files, fileUtil) {
     $scope.fileTitle = 'PageName';
+    foldrService.files = files;
+    //TODO refactor this back into the services
+    var displayedFiles = fileUtil.initDisplayedFiles(files);
+
     $scope.livestreamQuery = $stateParams.livestreamQuery;
-    console.log($scope.livestreamQuery);
-    console.log($stateParams);
     console.log('Redirect');
     console.log(foldrService.current.fileIndex);
-    if (foldrService.files.length > 0) {
-      var type = foldrService.files[parseInt($stateParams.fileId)].type;
-      $scope.fileTitle = foldrService.files[parseInt($stateParams.fileId)].title;
-      foldrService.current.fileIndex = parseInt($stateParams.fileId);
-      console.log('updated');
-      console.log(foldrService.current.fileIndex);
-      if (type === 'livestream') {
 
+    $scope.file = null;
+    if(displayedFiles.length > 0){
+          $scope.file = displayedFiles[parseInt($stateParams.fileId)];
+      var type = $scope.file.type;
+      $scope.fileTitle = $scope.file.title;
+      foldrService.current.fileIndex = parseInt($stateParams.fileId);
+      if (type === 'livestream') {
         console.log('update')
         $state.go("app.foldr.livestream", {
           fileId: $stateParams.fileId,
           foldrId : $stateParams.foldrId,
-          livestreamQuery: foldrService.getFile().livestreamQuery
+          livestreamQuery: $scope.file.livestreamQuery,
+          isEtherCalc:true
         }, {
           inherit: false,
           location: false
@@ -278,7 +300,7 @@ angular.module('starter.controllers', ['starter.services'])
           location: false
         });
       } else {
-        $scope.inputUrl = foldrService.getFile().url;
+        $scope.inputUrl = $scope.file.url;
         $scope.url = $sce.trustAsResourceUrl($scope.inputUrl);
       }
     }
@@ -287,4 +309,4 @@ angular.module('starter.controllers', ['starter.services'])
 
 
 
-  })
+  }])

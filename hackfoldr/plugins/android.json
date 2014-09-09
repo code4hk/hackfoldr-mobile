@@ -15,6 +15,10 @@
                         {
                             "xml": "<feature name=\"CordovaHttpPlugin\"><param name=\"android-package\" value=\"com.synconset.CordovaHttpPlugin\" /></feature>",
                             "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"WebIntent\"><param name=\"android-package\" value=\"com.borismus.webintent.WebIntent\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -26,6 +30,16 @@
                             "xml": "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />",
                             "count": 1
                         }
+                    ],
+                    "/*/application/activity": [
+                        {
+                            "xml": "<intent-filter><data android:host=\"hack.etblue.tw\" android:pathPattern=\".*\" android:scheme=\"http\" /><action android:name=\"android.intent.action.VIEW\" /><category android:name=\"android.intent.category.DEFAULT\" /><category android:name=\"android.intent.category.BROWSABLE\" /></intent-filter>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<intent-filter><action android:name=\"android.nfc.action.NDEF_DISCOVERED\" /><category android:name=\"android.intent.category.DEFAULT\" /><data android:host=\"hack.etblue.tw\" android:pathPattern=\".*\" android:scheme=\"http\" /></intent-filter>",
+                            "count": 1
+                        }
                     ]
                 }
             }
@@ -34,6 +48,14 @@
     "installed_plugins": {
         "com.synconset.cordovaHTTP": {
             "PACKAGE_NAME": "hk.code4.hackfoldrmobile"
+        },
+        "net.yoik.cordova.plugins.intentfilter": {
+            "URL_SCHEME": "http",
+            "HOST_NAME": "hack.etblue.tw",
+            "PACKAGE_NAME": "com.ionicframework.myapp460341"
+        },
+        "com.borismus.webintent": {
+            "PACKAGE_NAME": "com.ionicframework.myapp460341"
         }
     },
     "dependent_plugins": {

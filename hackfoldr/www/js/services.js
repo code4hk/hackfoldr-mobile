@@ -4,6 +4,29 @@ angular.module('starter.services', [])
       return appConfig.sns;
     }
   ])
+  .service('FileUtil',function(){
+
+    var _util = {};
+
+    _util.initDisplayedFiles =function(files){
+      var displayedFiles = [];
+      //quite stupid to make it nested then flatten it back
+
+      Lazy(files).each(function(file){
+        displayedFiles.push(file);
+        if(file.type==="folder"){
+          file.files = Lazy(file.files).map(function(subFile){
+              subFile.parent = file.id;
+              return subFile;
+          }).value();
+          displayedFiles.push(file.files);
+        }
+      });
+      return Lazy(displayedFiles).flatten().value();
+    }
+
+    return _util;
+  })
   .service('foldrService', function($http, CacheService,md5Util) {
 
     //Now we just support hackfoldr with Gspreadsheet. Better get a meta API
@@ -42,7 +65,7 @@ angular.module('starter.services', [])
 
     function _parseEtherCalcFeed(data){
       var files = [];
-      var json = csv2JSON(data,["url","key","folder"]);
+      var json = csv2JSON(data,["url","key","folder","tag","livestream"]);
       console.log(json);
 
       //stack
@@ -56,7 +79,7 @@ angular.module('starter.services', [])
           inFolder = true;
           folder = _getFolder(i,v.key);
         }else{
-          file = _parseFile(i,v.url,v.key,v.livestreamQuery);
+          file = _parseFile(i,v.url,v.key,v.livestream);
         }
         if(inFolder && !isFolder){
           folder.files.push(file);
@@ -116,7 +139,7 @@ angular.module('starter.services', [])
     function _parseRowAsFile(id,columns){
       var url = columns[0];
       var content = columns[1];
-      var livestreamQuery = columns[2];
+      var livestreamQuery = columns[5];
       var isFolder = columns[3] === "expand";
       if(isFolder){
         return _getFolder(id,content);
@@ -153,7 +176,7 @@ angular.module('starter.services', [])
       _service.files = files;
       return files;
     }
-
+    //TODO cache the opened foldr (files) here in service
     _service.openFoldr = function(id,isEtherCalc) {
 
       if(!isEtherCalc){
