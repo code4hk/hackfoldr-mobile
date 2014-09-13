@@ -30,6 +30,18 @@ angular.module('starter.controllers', ['starter.services'])
     };
 
 
+    $scope.refresh = function(){
+      //reload and set force refresh flag
+      console.log('refresh');
+      //TODO current state?
+      // https://mwop.net/blog/2014-05-08-angular-ui-router-reload.html
+      $state.go('.', {"isRefresh":true}, { reload: true });
+
+    //   $state.transitionTo($state.current, $stateParams, {
+    //   reload: true, inherit: false, notify: false
+    // });
+    }
+
 
     // //wild guess as workaround
     function checkISEtherCalc(id){
@@ -116,6 +128,40 @@ angular.module('starter.controllers', ['starter.services'])
 
   }
 ])
+.controller('ImageCtrl', ['$scope', 'CacheService','$stateParams','FileUtil','files','md5Util',
+  function($scope, CacheService,$stateParams,fileUtil,files,md5Util) {
+
+console.log('$stateParams');
+// imageToDisplay
+
+$scope.imageToDisplay;
+
+var displayedFiles = fileUtil.initDisplayedFiles(files);
+$scope.file = displayedFiles[parseInt($stateParams.fileId)];
+
+var key=md5Util.md5($scope.file.url);
+
+
+//TODO don't even run this SQL when isRefresh. setup promise.
+  CacheService.getCacheImage(key)
+  .then(function(results) {
+    console.log(arguments);
+
+var isRefresh = !!$stateParams.isRefresh;
+    if(results.length>0 && !isRefresh){
+      console.log('cache hit');
+
+
+    }else{
+      console.log('cache miss');
+      $scope.imageToDisplay = $scope.file.url;
+      $scope.$apply();
+      CacheService.cacheImage(key,$scope.file.url);
+
+    }
+  });
+
+  }])
 .controller('FileListsCtrl',['$scope','$stateParams','files','$state','FileUtil',
 function($scope, $stateParams, files,$state,fileUtil) {
   console.log('init foldr');
@@ -146,6 +192,7 @@ function($scope, $stateParams, files,$state,fileUtil) {
   //     displayedFiles.push(file.files);
   //   }
   // });
+
 
 
 
@@ -289,12 +336,13 @@ function($scope, $stateParams, files,$state,fileUtil) {
           location: false
         });
       } else if (type === "image") {
-        console.log('its images');
         //inject here
         $state.go("app.foldr.image", {
           fileId: $stateParams.fileId,
           foldrId : $stateParams.foldrId,
-          imageName: null
+          imageName: null,
+          isEtherCalc:true,
+          isRefresh:false
         }, {
           inherit: false,
           location: false

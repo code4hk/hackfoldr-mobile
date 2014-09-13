@@ -202,12 +202,35 @@ angular.module('starter.services', [])
   })
   .service('CacheService', ['DbService', '$http','q',
     function(DbService, $http,Q) {
+
+  //work in emulator but not in browser
+  // http://stackoverflow.com/questions/934012/get-image-data-in-javascript
+  function getBase64FromImageUrl(URL) {
+    var deferred = Q.defer();
+      var img = new Image();
+      img.src = URL;
+      img.crossOrigin = "Anonymous";
+
+      img.onload = function () {
+        var canvas = document.createElement("canvas");
+        canvas.width =this.width;
+        canvas.height =this.height;
+
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(this, 0, 0);
+
+        var data = canvas.toDataURL("image/png").replace(/^data:image\/(png|jpg);base64,/, "");
+        deferred.resolve(data);
+      }
+
+      return deferred.promise;
+  }
+
+
       var _service = {};
       _service.cacheImage = function(key, url) {
-        $http.get(url).then(function(data) {
-          var imageData = data.data;
-          DbService.insertCache(key, imageData);
-
+        getBase64FromImageUrl(url).then(function(data) {
+          DbService.insertCache(key, data);
         })
       }
 
@@ -314,7 +337,7 @@ angular.module('starter.services', [])
       console.log(err);
     }
 
-
+    _service.init();
     return _service;
 
   }])

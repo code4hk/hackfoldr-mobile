@@ -5,7 +5,6 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
 
-console.log(window);
 // cordovaHttp.get("https://google.com/", {
 //     id: 12,
 //     message: "test"
@@ -84,6 +83,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
           }
         }
       })
+      //TODO become abstract
       .state('app.foldr.single', {
         url: "/file/:fileId",
         views: {
@@ -120,12 +120,12 @@ angular.module('starter', ['ionic', 'starter.controllers'])
         },
         'mainContent': {
           templateUrl: "templates/image.html",
-          controller: 'FileCtrl'
+          controller: 'ImageCtrl'
         }
       }
     })
       .state('app.foldr', {
-        url: "/foldr/:foldrId?isEtherCalc",
+        url: "/foldr/:foldrId?isEtherCalc&isRefresh",
         abstract: true,
         templateUrl: "templates/foldr.html",
         resolve: {

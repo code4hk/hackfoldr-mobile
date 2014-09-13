@@ -1,4 +1,5 @@
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes.dex : \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/com/borismus/webintent/WebIntent.class \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/com/github/kevinsawicki/http/HttpRequest$1.class \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/com/github/kevinsawicki/http/HttpRequest$10.class \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/com/github/kevinsawicki/http/HttpRequest$2.class \
@@ -81,4 +82,17 @@
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/org/apache/cordova/file/LocalFilesystemURL.class \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/org/apache/cordova/file/NoModificationAllowedException.class \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/org/apache/cordova/file/TypeMismatchException.class \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/org/apache/cordova/filetransfer/FileProgressResult.class \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/org/apache/cordova/filetransfer/FileTransfer$1.class \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/org/apache/cordova/filetransfer/FileTransfer$2.class \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/org/apache/cordova/filetransfer/FileTransfer$3.class \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/org/apache/cordova/filetransfer/FileTransfer$4.class \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/org/apache/cordova/filetransfer/FileTransfer$5.class \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/org/apache/cordova/filetransfer/FileTransfer$ExposedGZIPInputStream.class \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/org/apache/cordova/filetransfer/FileTransfer$RequestContext.class \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/org/apache/cordova/filetransfer/FileTransfer$SimpleTrackingInputStream.class \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/org/apache/cordova/filetransfer/FileTransfer$TrackingGZIPInputStream.class \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/org/apache/cordova/filetransfer/FileTransfer$TrackingInputStream.class \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/org/apache/cordova/filetransfer/FileTransfer.class \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/classes/org/apache/cordova/filetransfer/FileUploadResult.class \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/dexedLibs/classes-96e09b5c8ab9bb02264b3c206606893b.jar \
