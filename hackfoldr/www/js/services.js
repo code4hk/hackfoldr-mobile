@@ -200,38 +200,52 @@ angular.module('starter.services', [])
     return _service;
 
   })
-  .service('CacheService', ['DbService', '$http','q',
-    function(DbService, $http,Q) {
+  .service('CacheService', ['DbService', '$http','q','md5Util',
+    function(DbService, $http,Q,md5Util) {
 
-  //work in emulator but not in browser
-  // http://stackoverflow.com/questions/934012/get-image-data-in-javascript
-  function getBase64FromImageUrl(URL) {
-    var deferred = Q.defer();
-      var img = new Image();
-      img.src = URL;
-      img.crossOrigin = "Anonymous";
+    //work in emulator but not in browser
+    // http://stackoverflow.com/questions/934012/get-image-data-in-javascript
+    function getBase64FromImageUrl(URL) {
+      var deferred = Q.defer();
+        var img = new Image();
+        img.src = URL;
+        img.crossOrigin = "Anonymous";
 
-      img.onload = function () {
-        var canvas = document.createElement("canvas");
-        canvas.width =this.width;
-        canvas.height =this.height;
+        img.onload = function () {
+          var canvas = document.createElement("canvas");
+          canvas.width =this.width;
+          canvas.height =this.height;
 
-        var ctx = canvas.getContext("2d");
-        ctx.drawImage(this, 0, 0);
+          var ctx = canvas.getContext("2d");
+          ctx.drawImage(this, 0, 0);
 
-        var data = canvas.toDataURL("image/png").replace(/^data:image\/(png|jpg);base64,/, "");
-        deferred.resolve(data);
-      }
+          var data = canvas.toDataURL("image/png").replace(/^data:image\/(png|jpg);base64,/, "");
+          deferred.resolve(data);
+        }
 
-      return deferred.promise;
-  }
-
+        return deferred.promise;
+    }
 
       var _service = {};
       _service.cacheImage = function(key, url) {
+        var key=md5Util.md5(url);
         getBase64FromImageUrl(url).then(function(data) {
-          DbService.insertCache(key, data);
+          var base64Img = btoa(encodeURIComponent(escape(data)));
+          DbService.insertCache(key, base64Img);
         })
+      }
+
+      //put the whole serialized JSON as data, up to display layer to handle displayed
+      _service.cacheSocialFeed = function(key,itemKey,item,picture){
+        if(item.type==="picture"){
+          _service.cacheImage(null,picture);
+        }
+        var data =  JSON.stringify(item);
+        DbService.insertFeedCache(key,itemKey,data);
+      }
+
+      _service.getCacheSocialFeed = function(key){
+        return DbService.getFeedCache(key);
       }
 
       _service.getCacheImage = function(id) {
@@ -258,20 +272,32 @@ angular.module('starter.services', [])
 
     }
 
-    _service.insertCache = function(key, data) {
-
-      //TODO base 64
+    _service.insertFeedCache = function(snsKey,itemKey,base64Data){
       function txInsertCahe(tx) {
-        var base64Img = btoa(encodeURIComponent(escape(data)));
-        tx.executeSql('INSERT INTO CACHE (key, data) VALUES (?, ?)',[key,base64Img]);
+        tx.executeSql('INSERT INTO CACHE_FEED (key, itemKey, data) VALUES (?, ?, ?)',[snsKey,itemKey,base64Data]);
+      }
+      db.transaction(txInsertCahe, errorCB, successCB);
+    }
+
+    _service.insertCache = function(key, base64Data) {
+      function txInsertCahe(tx) {
+        tx.executeSql('INSERT INTO CACHE (key, data) VALUES (?, ?)',[key,base64Data]);
       }
       db.transaction(txInsertCahe, errorCB, successCB);
 
       //return promise
-
     }
 
-    _service.getCache = function(key) {
+    _service.getFeedCache = function(key){
+      //TODO LIMIT
+      return _getCacheWithQuery(key,'SELECT * FROM CACHE_FEED where key = ?',[key]);
+    }
+
+    _service.getCache = function(key){
+      return _getCacheWithQuery(key,'SELECT * FROM CACHE where key = ?',[key]);
+    }
+
+    var _getCacheWithQuery = function(key,sql,params) {
       var results = [];
       var deferred = Q.defer();
       function querySuccess(tx, results) {
@@ -284,11 +310,12 @@ angular.module('starter.services', [])
         results = results.rows;
         console.log('results');
         console.log(results);
+        deferred.resolve(results);
       }
 
       function queryDB(tx) {
         // tx.executeSql('SELECT * FROM CACHE where key = ?', [key]);
-        tx.executeSql('SELECT * FROM CACHE where key = ?', [key], querySuccess);
+        tx.executeSql(sql, params, querySuccess);
       }
       db.transaction(queryDB, function() {
         console.log('err');
@@ -302,7 +329,12 @@ angular.module('starter.services', [])
 
     function initDB(tx) {
       tx.executeSql('DROP TABLE IF EXISTS CACHE');
+      tx.executeSql('DROP TABLE IF EXISTS CACHE_FEED');
+      //image url md5 as key
       tx.executeSql('CREATE TABLE IF NOT EXISTS CACHE (id INTEGER PRIMARY KEY, key, data)');
+      //Difference: need to run bulk query for CACHE_FEED
+      //snskey and feedItemUuid as key
+      tx.executeSql('CREATE TABLE IF NOT EXISTS CACHE_FEED (id INTEGER PRIMARY KEY, key, itemKey, data)');
     }
 
     function populateDB(tx) {

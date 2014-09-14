@@ -30,6 +30,10 @@ angular.module('starter.services')
             return this;
           };
 
+          builder.getQuery = function(){
+            return _query;
+          }
+
           builder.query = function(query) {
             var trimQuery = query.match(/live:(.*)/);
             if (trimQuery.length > 1) {

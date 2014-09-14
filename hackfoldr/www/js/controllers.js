@@ -85,8 +85,8 @@ angular.module('starter.controllers', ['starter.services'])
   }
 ])
 
-.controller('SNSCtrl', ['$scope', 'DbService', 'snsService','$stateParams',
-  function($scope, DbService, snsService,$stateParams) {
+.controller('SNSCtrl', ['$scope', 'CacheService', 'snsService','$stateParams',
+  function($scope, CacheService, snsService,$stateParams) {
 
     $scope.feeds = [];
     console.log("SNS init");
@@ -103,31 +103,59 @@ angular.module('starter.controllers', ['starter.services'])
       } else {
         $scope.$emit('enlargedIndexUpdated', -1);
       }
+    }
 
+    //use cache first, then try auto refresh, only replace when successful
+
+    function _cacheFeedItems(key,feeds){
+
+      Lazy(feeds).each(function(item){
+        //quite coupled to fb for nows
+        CacheService.cacheSocialFeed(key,item.id, item,item.link);
+      });
+
+// getCacheSocialFeed
 
     }
 
-    var context = snsService["facebook"].searchContext().query(livestreamQuery);
-
-    snsService["facebook"].search(context)
-      .then(function(data) {
-
-        if (data.error) {
-          throw new Error(data.error.message);
-        }
-
-        $scope.feeds = data.data;
-        $scope.$digest();
-
-      })
-      .fail(function(err) {
-        console.error('error');
-        console.log(err);
+    function _loadFeedFromCache(key){
+      CacheService.getCacheSocialFeed(key)
+      .then(function(results){
+          console.log(results);
+          console.log('_loadFeedFromCache'+results.length);
       });
+    }
+
+    function _init(){
+      var context = snsService["facebook"].searchContext().query(livestreamQuery);
+
+  // _loadFeedFromCache
+      _loadFeedFromCache(context.getQuery());
+
+      snsService["facebook"].search(context)
+        .then(function(data) {
+
+          if (data.error) {
+            throw new Error(data.error.message);
+          }
+
+          $scope.feeds = data.data;
+          _cacheFeedItems(context.getQuery(),$scope.feeds);
+
+          $scope.$digest();
+
+        })
+        .fail(function(err) {
+          console.error('error');
+          console.log(err);
+        });
+
+    }
+
+    _init();
 
 
-  }
-])
+}])
 .controller('ImageCtrl', ['$scope', 'CacheService','$stateParams','FileUtil','files','md5Util',
   function($scope, CacheService,$stateParams,fileUtil,files,md5Util) {
 
@@ -147,7 +175,7 @@ var key=md5Util.md5($scope.file.url);
   .then(function(results) {
     console.log(arguments);
 
-var isRefresh = !!$stateParams.isRefresh;
+    var isRefresh = !!$stateParams.isRefresh;
     if(results.length>0 && !isRefresh){
       console.log('cache hit');
 
