@@ -89,7 +89,6 @@ angular.module('starter.controllers', ['starter.services'])
   function($scope, CacheService, snsService,$stateParams) {
 
     $scope.feeds = [];
-    console.log("SNS init");
     var livestreamQuery = $stateParams.livestreamQuery;
     $scope.enlargedIndex = -1;
 
@@ -106,53 +105,73 @@ angular.module('starter.controllers', ['starter.services'])
     }
 
     //use cache first, then try auto refresh, only replace when successful
-
     function _cacheFeedItems(key,feeds){
-
+      //TODO return promise
       Lazy(feeds).each(function(item){
         //quite coupled to fb for nows
         CacheService.cacheSocialFeed(key,item.id, item,item.link);
       });
 
-// getCacheSocialFeed
-
     }
 
     function _loadFeedFromCache(key){
-      CacheService.getCacheSocialFeed(key)
-      .then(function(results){
-          console.log(results);
-          console.log('_loadFeedFromCache'+results.length);
-      });
+      return CacheService.getCacheSocialFeed(key);
+    }
+
+    Pace.options = {
+      restartOnRequestAfter: true
+    }
+    function _loadFeedFromSNS(context){
+        return snsService["facebook"].search(context)
+          .then(function(data) {
+
+            if (data.error) {
+              throw new Error(data.error.message);
+            }
+            if(data.data){
+              $scope.feeds = data.data;
+              return _cacheFeedItems(context.getQuery(),$scope.feeds);
+            }
+          })
+          .fail(function(err) {
+            console.error('error');
+            console.log(err);
+          });
+
+
+    }
+
+    function _parseItems(results){
+      return Lazy(results).map(function(item){
+        return JSON.parse(item.data);
+      }).value();
+
     }
 
     function _init(){
       var context = snsService["facebook"].searchContext().query(livestreamQuery);
+      Pace.start();
+      _loadFeedFromCache(context.getQuery())
+      .then(function(results){
+        if(results.length>0){
 
-  // _loadFeedFromCache
-      _loadFeedFromCache(context.getQuery());
+          $scope.feeds = _parseItems(results);
 
-      snsService["facebook"].search(context)
-        .then(function(data) {
+          _loadFeedFromSNS(context);
 
-          if (data.error) {
-            throw new Error(data.error.message);
-          }
+        }else{
+          return _loadFeedFromSNS(context);
+        }
 
-          $scope.feeds = data.data;
-          _cacheFeedItems(context.getQuery(),$scope.feeds);
-
-          $scope.$digest();
-
-        })
-        .fail(function(err) {
-          console.error('error');
-          console.log(err);
-        });
+      })
+      .finally(function(){
+        $scope.$digest();
+        Pace.stop();
+      })
 
     }
 
-    _init();
+      _init();
 
 
 }])

@@ -133,6 +133,7 @@ angular.module('starter.services')
           .then(function(token) {
             var endpoint = context.build(token);
             // return request.bind(this, endpoint);
+
             return Q($http.jsonp(endpoint + "&callback=JSON_CALLBACK")).then(function(res) {
               return res.data;
             })

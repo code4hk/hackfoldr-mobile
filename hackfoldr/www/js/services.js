@@ -181,6 +181,7 @@ angular.module('starter.services', [])
 
       if(!isEtherCalc){
         var url = getSpreadsheetUrl(id);
+
         return Q($http.jsonp(url + "&callback=JSON_CALLBACK"))
           .then(function(res) {
             return _parseFeed(res.data.feed);
@@ -302,15 +303,12 @@ angular.module('starter.services', [])
       var deferred = Q.defer();
       function querySuccess(tx, results) {
         var len = results.rows.length;
-        console.log("IMAGE table: " + len + " rows found.");
+
+        var items = [];
         for (var i = 0; i < len; i++) {
-          console.log("Row = " + i + " ID = " + results.rows.item(i).id);
-          console.log(results.rows.item(i));
+          items.push(results.rows.item(i));
         }
-        results = results.rows;
-        console.log('results');
-        console.log(results);
-        deferred.resolve(results);
+        deferred.resolve(items);
       }
 
       function queryDB(tx) {
