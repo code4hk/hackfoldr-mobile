@@ -122,23 +122,26 @@ angular.module('starter.controllers', ['starter.services'])
       restartOnRequestAfter: true
     }
     function _loadFeedFromSNS(context){
+          Pace.start();
+
         return snsService["facebook"].search(context)
           .then(function(data) {
-
             if (data.error) {
               throw new Error(data.error.message);
             }
             if(data.data){
               $scope.feeds = data.data;
+              Pace.stop();
               return _cacheFeedItems(context.getQuery(),$scope.feeds);
             }
           })
-          .fail(function(err) {
-            console.error('error');
-            console.log(err);
-          });
-
-
+          .then(function(){
+            var updatedTimestamp = Date.now();
+            $scope.lastUpdated = updatedTimestamp;
+          })
+          .finally(function(){
+            Pace.stop();
+          })
     }
 
     function _parseItems(results){
@@ -150,7 +153,6 @@ angular.module('starter.controllers', ['starter.services'])
 
     function _init(){
       var context = snsService["facebook"].searchContext().query(livestreamQuery);
-      Pace.start();
       _loadFeedFromCache(context.getQuery())
       .then(function(results){
         if(results.length>0){
@@ -161,12 +163,12 @@ angular.module('starter.controllers', ['starter.services'])
 
         }else{
           return _loadFeedFromSNS(context);
+
         }
 
       })
       .finally(function(){
         $scope.$digest();
-        Pace.stop();
       })
 
     }

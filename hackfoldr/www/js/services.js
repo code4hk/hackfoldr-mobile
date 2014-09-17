@@ -13,14 +13,16 @@ angular.module('starter.services', [])
       //quite stupid to make it nested then flatten it back
 
       Lazy(files).each(function(file){
-        displayedFiles.push(file);
-        if(file.type==="folder"){
-          file.files = Lazy(file.files).map(function(subFile){
-              subFile.parent = file.id;
-              return subFile;
-          }).value();
-          displayedFiles.push(file.files);
-        }
+       if(file){
+          displayedFiles.push(file);
+          if(file.type==="folder"){
+            file.files = Lazy(file.files).map(function(subFile){
+                subFile.parent = file.id;
+                return subFile;
+            }).value();
+            displayedFiles.push(file.files);
+          }
+       }
       });
       return Lazy(displayedFiles).flatten().value();
     }
