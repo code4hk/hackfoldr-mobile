@@ -80,6 +80,16 @@ angular.module('starter.controllers', ['starter.services'])
     };
     //test
 
+    $scope.openToday = function() {
+      var url = 'https://api.github.com/repos/code4hk/hackfoldr-2.0/contents/today.code4.hk';
+      $http.get(url).then(function(data){
+        var id = atob(data.data.content);
+        $scope.folderData.id = id;
+        $scope.doOpen();
+
+
+      })
+    };
 
     console.log('init');
   }
@@ -194,8 +204,6 @@ var key=md5Util.md5($scope.file.url);
 //TODO don't even run this SQL when isRefresh. setup promise.
   CacheService.getCacheImage(key)
   .then(function(results) {
-    console.log(arguments);
-
     var isRefresh = !!$stateParams.isRefresh;
     if(results.length>0 && !isRefresh){
       console.log('cache hit');
