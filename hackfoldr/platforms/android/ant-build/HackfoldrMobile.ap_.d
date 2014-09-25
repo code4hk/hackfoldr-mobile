@@ -40,7 +40,9 @@
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/README.md \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/templates \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/css/index.css \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/css/pace.css \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/css/style.css \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/img/icon-60.png \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/img/ionic.png \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/img/logo.png \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/js/app-config.js \
@@ -53,6 +55,7 @@
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/lib/ionic \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/lib/lazy.browser.js \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/lib/lazy.js \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/lib/pace-0.5.6.min.js \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/lib/q.js \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/lib/ionic/css \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/lib/ionic/fonts \
