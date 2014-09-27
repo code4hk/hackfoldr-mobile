@@ -115,15 +115,31 @@ angular.module('starter.services', [])
       }
 
 
+      function getLivestream(livestreamQuery,url){
+        
+        if(livestreamQuery){
+          if(livestreamQuery.match(/^live:/)){
+            return livestreamQuery;
+          }
+        }
 
-    function _parseFile(id,url,content,livestreamQuery,isFolder){
-      var type = "normal";
-      if (livestreamQuery) {
-        if (livestreamQuery.match(/^live:/)) {
-          type = 'livestream';
+        var matches = url.match(/www\.facebook.com\/([^\/]+)/);
+        if(matches){
+          var pageId  = matches[1]; 
+          if(pageId){
+            return 'live:fbpage='+pageId;
+          }
         }
       }
 
+
+    function _parseFile(id,url,content,livestreamQuery,isFolder){
+      var type = "normal";
+      livestreamQuery = getLivestream(livestreamQuery, url)
+      if(livestreamQuery){
+          type = 'livestream';
+          livestreamQuery = livestreamQuery;
+      }
       if (url.match(/(.*)(.png|jpg|jpeg|gif$)/)) {
         type = "image";
       }

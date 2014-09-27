@@ -377,7 +377,7 @@ function($scope, $stateParams, files,$state,fileUtil) {
 
     $scope.file = null;
     if(displayedFiles.length > 0){
-          $scope.file = displayedFiles[parseInt($stateParams.fileId)];
+      $scope.file = displayedFiles[parseInt($stateParams.fileId)];
       var type = $scope.file.type;
       $scope.fileTitle = $scope.file.title;
       foldrService.current.fileIndex = parseInt($stateParams.fileId);

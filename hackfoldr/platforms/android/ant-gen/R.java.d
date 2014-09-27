@@ -1,5 +1,5 @@
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-gen/com/ionicframework/myapp460341/R.java \
- : /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/res/drawable/icon.png \
+ : /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/res/drawable/logo.png \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/res/drawable-hdpi/icon.png \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/res/drawable-land-hdpi/screen.png \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/res/drawable-land-ldpi/screen.png \
