@@ -83,12 +83,16 @@ angular.module('starter.controllers', ['starter.services'])
     $scope.openToday = function() {
       var url = 'https://raw.githubusercontent.com/code4hk/hackfoldr-2.0/master/today.code4.hk';
       $http.get(url).then(function(data){
-        var id = data.data;
+        var id;
+        try { id = data.data.replace(/\s*/g, '') } catch (e) { id = 'hkstudentstrike' };
         $scope.folderData.id = id;
         $scope.doOpen();
 
 
-      })
+      }).error(function(){
+          $scope.folderData.id = 'hkstudentstrike';
+          $scope.doOpen();
+      });
     };
 
     console.log('init');
