@@ -238,7 +238,7 @@ angular.module('starter.services', [])
 
     return _service;
 
-  })
+  }])
   .service('CacheService', ['DbService', '$http','q','md5Util',
     function(DbService, $http,Q,md5Util) {
 
