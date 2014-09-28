@@ -196,26 +196,59 @@ angular.module('starter.services', [])
     }
     //TODO cache the opened foldr (files) here in service
     _service.openFoldr = function(id,isEtherCalc) {
+      id = id.replace(/\n/g,"");
+      return CacheService.getCacheFoldr(id)
+      .then(function(results) {
+        console.log(arguments);
+        if(results.length>0){
 
-      if(!isEtherCalc){
-        var url = getSpreadsheetUrl(id);
+        }else{
+          return _loadFolder(id,isEtherCalc);  
+        }
 
-        return Q($http.jsonp(url + "&callback=JSON_CALLBACK"))
-          .then(function(res) {
-            return _parseFeed(res.data.feed);
-          });
-      }else{
-        var url = getEtherCalcUrl(id);
-        return Q($http.get(url))
-          .then(function(res) {
-            return _parseEtherCalcFeed(res.data);
-          });
-
-      }
+      })
 
 
 
     }
+      
+    function _loadFolder(id, isEtherCalc) {
+
+      var loadFolderPromise;
+
+      if (!isEtherCalc) {
+        var url = getSpreadsheetUrl(id);
+
+
+        loadFolderPromise = Q($http.jsonp(url + "&callback=JSON_CALLBACK"))
+          .then(function(res) {
+            return _parseFeed(res.data.feed);
+          });
+      } else {
+
+        var url = getEtherCalcUrl(id);
+        loadFolderPromise = Q($http.get(url))
+          .then(function(res) {
+            return _parseEtherCalcFeed(res.data);
+          });
+      }
+
+
+
+      return loadFolderPromise
+      .then(function(files) {
+        CacheService.cacheFoldr(id, files)
+        return files;
+      })
+    }
+
+    function _loadFolderFromCache (){
+
+    }
+
+
+
+
     return _service;
 
   })
@@ -253,6 +286,9 @@ angular.module('starter.services', [])
           DbService.insertCache(key, base64Img);
         })
       }
+      _service.cacheFoldr = function(key,files) {
+          DbService.insertFoldrCache(key,files)
+      };
 
       //put the whole serialized JSON as data, up to display layer to handle displayed
       _service.cacheSocialFeed = function(key,itemKey,item,picture){
@@ -261,6 +297,10 @@ angular.module('starter.services', [])
         }
         var data =  JSON.stringify(item);
         DbService.insertFeedCache(key,itemKey,data);
+      }
+
+      _service.getCacheFoldr = function(key){
+        return DbService.getFoldrCache(key);
       }
 
       _service.getCacheSocialFeed = function(key){
@@ -287,8 +327,6 @@ angular.module('starter.services', [])
 
       db = window.openDatabase("Database", "1.0", "PhoneGap Demo", 200000);
       db.transaction(initDB, errorCB, successCB);
-
-
     }
 
     _service.insertFeedCache = function(snsKey,itemKey,base64Data){
@@ -298,6 +336,15 @@ angular.module('starter.services', [])
       db.transaction(txInsertCahe, errorCB, successCB);
     }
 
+
+    _service.insertFoldrCache = function(key,files){
+      function txInsertCahe(tx) {
+        tx.executeSql('INSERT INTO CACHE_FOLDER (key, itemKey, data) VALUES (?, ?, ?)',[key,files]);
+      }
+      db.transaction(txInsertCahe, errorCB, successCB);
+    }
+
+
     _service.insertCache = function(key, base64Data) {
       function txInsertCahe(tx) {
         tx.executeSql('INSERT INTO CACHE (key, data) VALUES (?, ?)',[key,base64Data]);
@@ -306,6 +353,12 @@ angular.module('starter.services', [])
 
       //return promise
     }
+
+    _service.getFoldrCache = function(key){
+        //TODO LIMIT
+      return _getCacheWithQuery(key,'SELECT * FROM CACHE_FOLDER where key = ?',[key]);
+    }
+
 
     _service.getFeedCache = function(key){
       //TODO LIMIT
@@ -346,11 +399,13 @@ angular.module('starter.services', [])
     function initDB(tx) {
       tx.executeSql('DROP TABLE IF EXISTS CACHE');
       tx.executeSql('DROP TABLE IF EXISTS CACHE_FEED');
+      tx.executeSql('DROP TABLE IF EXISTS CACHE_FOLDER');
       //image url md5 as key
       tx.executeSql('CREATE TABLE IF NOT EXISTS CACHE (id INTEGER PRIMARY KEY, key, data)');
       //Difference: need to run bulk query for CACHE_FEED
       //snskey and feedItemUuid as key
       tx.executeSql('CREATE TABLE IF NOT EXISTS CACHE_FEED (id INTEGER PRIMARY KEY, key, itemKey, data)');
+      tx.executeSql('CREATE TABLE IF NOT EXISTS CACHE_FOLDER (id INTEGER PRIMARY KEY, key, folderKey, data)');
     }
 
     function populateDB(tx) {
