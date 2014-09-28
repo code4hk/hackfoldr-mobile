@@ -81,9 +81,9 @@ angular.module('starter.controllers', ['starter.services'])
     //test
 
     $scope.openToday = function() {
-      var url = 'https://api.github.com/repos/code4hk/hackfoldr-2.0/contents/today.code4.hk';
+      var url = 'https://raw.githubusercontent.com/code4hk/hackfoldr-2.0/master/today.code4.hk';
       $http.get(url).then(function(data){
-        var id = atob(data.data.content);
+        var id = data.data;
         $scope.folderData.id = id;
         $scope.doOpen();
 
