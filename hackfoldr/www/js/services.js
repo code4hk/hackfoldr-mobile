@@ -29,7 +29,7 @@ angular.module('starter.services', [])
 
     return _util;
   })
-  .service('foldrService', function($http, CacheService,md5Util) {
+  .service('foldrService', ['$http','CacheService','md5Util',function($http, CacheService,md5Util) {
 
     //Now we just support hackfoldr with Gspreadsheet. Better get a meta API
     //od6 for default sheet

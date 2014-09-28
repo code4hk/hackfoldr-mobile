@@ -14,7 +14,7 @@
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/res/drawable-xhdpi/icon.png \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/res/values/strings.xml \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/res/xml/config.xml \
-/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/res/drawable/icon.png \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/res/drawable/logo.png \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/res/drawable-hdpi/icon.png \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/res/drawable-land-hdpi/screen.png \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/ant-build/res/drawable-land-ldpi/screen.png \

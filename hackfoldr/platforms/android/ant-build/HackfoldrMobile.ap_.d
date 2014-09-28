@@ -52,6 +52,7 @@
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/js/md5.js \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/js/services.js \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/js/sns-service.js \
+/Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/lib/angular-busy.js \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/lib/ionic \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/lib/lazy.browser.js \
 /Users/vincent/Dropbox/code4hk/hackfoldr-mobile/hackfoldr/platforms/android/assets/www/lib/lazy.js \
