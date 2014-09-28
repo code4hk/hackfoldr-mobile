@@ -82,6 +82,12 @@ If you feel daring and want use the bleeding edge 'Nightly' version of Ionic, ch
 
 Warning: the nightly version is not stable.
 
+## Android App build
+$ cordova build --release
+$ jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore /Users/user/Downloads/hackfoldr-mobile-keystore.jks HackfoldrMobile-release-unsigned.apk hackfoldr
+$ jarsigner -verify -verbose -certs HackfoldrMobile-release-unsigned.apk
+$ /Users/user/android-sdks/tools/zipalign -v 4 HackfoldrMobile-release-unsigned.apk Hackfoldr-Mobile.apk
+
 
 ## Issues
 Issues have been disabled on this repo, if you do find an issue or have a question consider posting it on the [Ionic Forum](http://forum.ionicframework.com/).  Or else if there is truly an error, follow our guidelines for [submitting an issue](http://ionicframework.com/contribute/#issues) to the main Ionic repository. On the other hand, pull requests are welcome here!
