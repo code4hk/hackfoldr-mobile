@@ -14,7 +14,7 @@
 //     console.error(response.error);
 // });
 
-angular.module('starter', ['ionic', 'starter.controllers'])
+angular.module('starter', ['ionic', 'starter.controllers','cgBusy'])
   .factory('q', function() {
     return Q;
   })

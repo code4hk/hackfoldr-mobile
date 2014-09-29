@@ -166,9 +166,16 @@ angular.module('starter.controllers', ['starter.services'])
 
     }
 
+
+    $scope.fileLoadingConfig = {
+      promise:null,
+      message: 'Loading...',
+      templateUrl:'templates/loading.html'
+    };
+
     function _init(){
       var context = snsService["facebook"].searchContext().query(livestreamQuery);
-      _loadFeedFromCache(context.getQuery())
+      $scope.fileLoadingConfig.promise=_loadFeedFromCache(context.getQuery())
       .then(function(results){
         if(results.length>0){
 
@@ -378,11 +385,38 @@ function($scope, $stateParams, files,$state,fileUtil) {
 
     $scope.livestreamQuery = $stateParams.livestreamQuery;
     console.log('Redirect');
+
     console.log(foldrService.current.fileIndex);
+
+
+    $scope.fileLoadingConfig = {
+      promise:null,
+      message: 'Loading...',
+      templateUrl:'templates/loading.html'
+    };
+
+    // <i class="fa fa-circle-o-notch fa-spin"></i>
+
+// {promise:myPromise,message:'Loading Your Data',templateUrl:'mycustomtemplate.html'}"
+
+
+    function isUrlNoIframe(url){
+      if(url.match(/^.*twitter.com/)){
+        return true;
+      }
+      return false;
+    }
 
     $scope.file = null;
     if(displayedFiles.length > 0){
       $scope.file = displayedFiles[parseInt($stateParams.fileId)];
+
+       var useApp = isUrlNoIframe($scope.file.url);
+
+       if(useApp){
+        // return window.open($scope.file.url, '_system');
+       }
+
       var type = $scope.file.type;
       $scope.fileTitle = $scope.file.title;
       foldrService.current.fileIndex = parseInt($stateParams.fileId);
@@ -411,6 +445,8 @@ function($scope, $stateParams, files,$state,fileUtil) {
         });
       } else {
         $scope.inputUrl = $scope.file.url;
+
+
         $scope.url = $sce.trustAsResourceUrl($scope.inputUrl);
       }
     }

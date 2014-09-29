@@ -1,7 +1,7 @@
 <ion-view title="{{fileTitle}}">
   <ion-content class="has-header">
-<div>
-    <ion-list>
+<div cg-busy="fileLoadingConfig" >
+    <ion-list >
       <ion-item class="feed-item" ng-class="{'enlarged-item':enlargedIndex===$index}" ng-click="enlargeItem($index)" ng-repeat="feed in feeds">
         {{feed.message}}
         {{feed.name}}
