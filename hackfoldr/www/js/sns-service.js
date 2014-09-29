@@ -71,7 +71,7 @@ angular.module('starter.services')
 
             if (_page || _groupId) {
               var entity = _page || _groupId;
-              url = Lazy(["https://graph.facebook.com/", entity, "/feed?access_token=", token]).join('');
+              url = Lazy(["https://graph.facebook.com/", entity, "/posts?access_token=", token]).join('');
             } else {
               url = Lazy(["https://graph.facebook.com/search?access_token=", token, "&q=", _keywords, "&limit=20"]).join('');
 
