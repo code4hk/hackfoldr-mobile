@@ -206,9 +206,10 @@ console.log('$stateParams');
 // imageToDisplay
 
 $scope.imageToDisplay;
+var fileIndex = parseInt($stateParams.fileId) - 1;
 
 var displayedFiles = fileUtil.initDisplayedFiles(files);
-$scope.file = displayedFiles[parseInt($stateParams.fileId)];
+$scope.file = displayedFiles[fileIndex];
 
 var key=md5Util.md5($scope.file.url);
 
@@ -409,7 +410,8 @@ function($scope, $stateParams, files,$state,fileUtil) {
 
     $scope.file = null;
     if(displayedFiles.length > 0){
-      $scope.file = displayedFiles[parseInt($stateParams.fileId)];
+      var fileIndex = parseInt($stateParams.fileId) - 1;
+      $scope.file = displayedFiles[fileIndex];
 
        var useApp = isUrlNoIframe($scope.file.url);
 
@@ -419,7 +421,7 @@ function($scope, $stateParams, files,$state,fileUtil) {
 
       var type = $scope.file.type;
       $scope.fileTitle = $scope.file.title;
-      foldrService.current.fileIndex = parseInt($stateParams.fileId);
+      foldrService.current.fileIndex = fileIndex;
       if (type === 'livestream') {
         console.log('update')
         $state.go("app.foldr.livestream", {
